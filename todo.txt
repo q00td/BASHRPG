@@ -1,0 +1,24 @@
+
+
+
+
+
+en gros dans gameloop
+y'aura 
+- une fonction pour determiner le type de map actuel
+- une fonction pour generer la map ( cette fonction s'occupera de gerer aussi
+les actions possible sur cette map  ) :
+        - Si combat gerer les combats et l'XP en fin de combat
+        - si trésor possibilité de looter ou non 
+        - si marchand , interaction avec lui
+        ( le nombre monstres et stats sont générés random )
+- fin de la map , recommencer la boucle while tant HP > 0 
+
+et faut aussi que je
+trouve une méthode pour joeur de la musique
+
+
+
+
+
+
