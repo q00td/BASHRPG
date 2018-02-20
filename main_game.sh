@@ -50,12 +50,12 @@ do
             init_class $class_nb
             break
             ;;
-        3)            
+        3)
             echo "choix : classe Mage"
             init_class $class_nb
             break
             ;;
-        4)            
+        4)
             echo "choix : classe Ranger"
             init_class $class_nb
             break            
