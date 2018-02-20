@@ -42,15 +42,26 @@ do
     case ${class_nb} in
         1)
             echo "choix : warrior"
+            init_class $class_nb
             break
             ;;
         2)
             echo "choix : classe thief"
+            init_class $class_nb
             break
             ;;
-# etc .... à toi de faire la suite !
+        3)            
+            echo "choix : classe Mage"
+            init_class $class_nb
+            break
+            ;;
+        4)            
+            echo "choix : classe Ranger"
+            init_class $class_nb
+            break            
+            ;;
         *)
-            echo "j'ai dit entre 1 et 4 !"
+            echo "Is it that hard to type a number between 1 and 4 ?"
             ;;
     esac
 done
@@ -58,9 +69,10 @@ done
 
 #TODO : A function that put all the data inside a txt file
 
-init_class $class_nb 
+ 
 
 echo "Here is your stats : "
+cat "stats.txt"
 #TODO : Show stats 
 
 #get_stats
