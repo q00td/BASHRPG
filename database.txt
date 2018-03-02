@@ -1,0 +1,8 @@
+sword:5:p
+longsword:10:p
+katana:15:p
+bow:10:p
+spear:12:p
+shield:10:d
+heal:15:h
+mana:15:m
