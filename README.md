@@ -1,5 +1,5 @@
-# BASH_RPG
-# 2018
+# -----------------BASH_RPG--------------
+#                   2018
 # Author : Quentin OTERNAUD , Quentin GANDILLET             
 Basically it's a RPG Game turn per turn, where you'll fight monsters , find loots inside chests or go to the town to sell / buy items
 You'll be able to level up to increase your stats and maybe later be able to cast spells , So far i still need to code the Town and the merchant and finally the spells.
