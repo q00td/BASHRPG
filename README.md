@@ -23,4 +23,4 @@ All monster stats are generated randomly based on your stats.
  :       ;                     `.      "``::::::''    .'
     ;                           `.   \_              /
   ;       ;                       +:   ~~--  `:'  -';
-                                   `:         : .::/  
+                                   `:         : .::/   
