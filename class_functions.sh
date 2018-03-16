@@ -39,22 +39,22 @@ init_class(){
 }
 
 choose_map(){
-	rnd=$((RANDOM%3))
+	rnd=$((RANDOM%10))
 	case ${rnd} in
-			0)
+			[0-4])
 				#MONSTER-----------------
 				echo "Oh crap, you encounter some monsters"
 				result=1
 				return $result
 				;;
-			1)
+			[5-6])
 				#CHEST-------------------
 				echo "Look a chest !"
 				
 				result=2
 				return $result
 				;;
-			2)
+			[7-10])
 				#TOWN--------------------
 				tableau=("Salhem" "Small town" "Hell(it's a town)") ; tab_size=${#tableau[@]} ; str=${tableau[$(( $RANDOM % tab_size ))]} 
 				echo "Welcome to $str ! "
@@ -69,16 +69,19 @@ choose_map(){
 play_map(){
 	case ${1} in
 			1)
+				echo "YOU ENCOUNTER MONSTERS"
+				sleep 1
 				nb=$1
 				#MONSTER-----------------
 				nb_monster=$((RANDOM%3))
 				echo "number of monster to generate : $((nb_monster + 1))"
 				for ((i=0; i<=nb_monster; i++)); do
+				   clear
 				   line_separator_ingame
 				   echo ""
 				   color=("32" "31" "33" "94" "36" "96") ; color_size=${#color[@]} ; y=${color[$(( $RANDOM % color_size ))]}
 				   echo -en "\e[${y}m"
-				   #tableau=("monster1.txt" "monster2.txt" "monster3.txt" "monster4.txt") ; tab_size=${#tableau[@]} ; cat ${tableau[$(( $RANDOM % tab_size ))]}
+				   tableau=("monster1.txt" "monster2.txt" "monster3.txt" "monster4.txt") ; tab_size=${#tableau[@]} ; cat ${tableau[$(( $RANDOM % tab_size ))]}
 				   echo -en "\e[39m" 
 				   echo ""
 				   echo ""
@@ -90,14 +93,19 @@ play_map(){
 				   fight_PvM $x $stats_p
 				   
 				   
+				   
 				   #fight_monster
 				done
 				;;
 			2)
 				#CHEST-------------------
+				clear
+				cat chest.txt
 				result=2
-				echo "inserting item"
-				shuf -n 1 database.txt >> inventory.txt
+			
+				item=$(shuf -n 1 database.txt)
+				echo "You found : $item !!!"
+				echo $item >> inventory.txt
 				return $result
 				
 				;;
@@ -290,7 +298,7 @@ fight_PvM(){
 }
 
 line_separator_ingame(){
-echo "------------------------------------------------------------"
+echo "--------------| F I G H T----------------S T A R T I N G |--------------"
 }
 line_separator_ingame_fight(){
 echo "         /_________________               _________________\ "
@@ -319,28 +327,29 @@ generate_dmg_monster(){
 
 
 open_inventory(){
-echo "     └> _____________________________________________________"
-echo -e "       |\e[4mWhat do you want to do : \e[24m                              |"
-echo "       |  1) Check your items                                |"
-echo "       |  2) Check your bag to use/drop/(Des)equip items     |"
-echo "       |  3) Quit inventory                                  |"
-echo "       ------------------------------------------------------"
+
 
 while :
 	do
+	echo "     └> _____________________________________________________"
+	echo -e "       |\e[4mWhat do you want to do : \e[24m                              |"
+	echo "       |  1) Check your items                                |"
+	echo "       |  2) Check your bag to use/drop/(Des)equip items     |"
+	echo "       |  3) Quit inventory                                  |"
+	echo "       ------------------------------------------------------"
 	    read -r -p "Your choice [1..3]" context_choice
 
 	    case ${context_choice} in
 		1)
 			liste | disp_hud
-			break
 		    ;;
 		2)
 			liste_bagpack #merci
 			equip
-			break
+			
 		    ;;
 		3)
+			clear
 			break
 		    ;;
 		*)
@@ -367,7 +376,7 @@ echo "legs=" >> equipped.txt
 liste_bagpack() {
     
 	local idx=1
-	echo "┌--------------------------┐"
+	echo "┌-NAME:DAMAGE/DEFENSE:CTG-┐"
 	while read ligne 
 	do
 		echo "${idx}) $ligne"
@@ -389,7 +398,7 @@ liste() {
   alpha=$(sed -n '4p' < equipped.txt)
   chest=$(cut -d "=" -f 2 <<< "$alpha")
   echo "$hand $offhand $chest"
-  beta=$(sed -n '5p' < equipped.txt)
+  beta=$(sed -n '6p' < equipped.txt)
   leg=$(cut -d "=" -f 2 <<< "$beta")
   echo "$leg"
 }
@@ -436,7 +445,7 @@ while :
 	done
 }
 
-waiting(){
+waiting2(){
 sleep 2
 }
 

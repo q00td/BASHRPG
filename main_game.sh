@@ -25,7 +25,7 @@ echo ""
 echo "---------------------------------------------------------------------------------"
 
 echo -en "\e[31m"
-#cat  bg_menu.txt
+cat  bg_menu.txt
 echo -en "\e[39m" 
 
 echo "---------------------------------------------------------------------------------"
@@ -74,7 +74,7 @@ done
 
 echo "Here is your stats : "
 cat "stats.txt"
-waiting
+waiting2
 #TODO : Show stats 
 
 #get_stats
@@ -114,6 +114,7 @@ echo "---------------------------------------NEW_ROOM---------------------------
 	    case ${context_choice} in
 		1)
 		    #open_inventory
+			clear
 			open_inventory
 		    ;;
 		2)
