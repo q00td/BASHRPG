@@ -17,6 +17,7 @@ my_dir="$(dirname $0)"
 source "${my_dir}/class_functions.sh"
 init
 
+tell_story "bonjour je mappelle quentin"
 echo "---------------------------------------------------------------------------------"
 echo ""
 echo ""

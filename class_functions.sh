@@ -72,6 +72,15 @@ choose_map(){
 				;;
 		esac
 }
+tell_story(){
+	echo ""
+	str=$1
+	for (( i=0; i<${#str}; i++ )); do
+		sleep "0.$(( RANDOM % 500 ))"
+
+		echo -n "${str:$i:1}"
+	done
+}
 play_map(){
 	case ${1} in
 			1)
