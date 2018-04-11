@@ -8,6 +8,7 @@ init_class(){
 			echo "mana:2">>stats.txt
 			echo "hp:50">>stats.txt
 			echo "xp:0">>stats.txt
+			echo "base_hp:50">>stats.txt
             ;;
         2)
             #thief-------------------
@@ -15,6 +16,8 @@ init_class(){
 			echo "mana:7">>stats.txt
 			echo "hp:30">>stats.txt
 			echo "xp:0">>stats.txt
+			echo "base_hp:30">>stats.txt
+
 
 
             ;;
@@ -24,6 +27,8 @@ init_class(){
 			echo "mana:8">>stats.txt
 			echo "hp:35">>stats.txt
 			echo "xp:0">>stats.txt
+			echo "base_hp:35">>stats.txt
+
             ;;
         4)
             #Ranger------------------
@@ -31,6 +36,8 @@ init_class(){
 			echo "mana:4">>stats.txt
 			echo "hp:40">>stats.txt
             echo "xp:0">>stats.txt
+			echo "base_hp:40">>stats.txt
+
 			;;
         *)  #------------------------
             echo "Error : Wrong choice , but i don't know how you managed to do such a mistake .."
@@ -62,7 +69,6 @@ choose_map(){
 				return $result
 				;;
 			*)  #------------------------
-				echo "Error : how is it even possible ?"
 				;;
 		esac
 }
@@ -81,21 +87,22 @@ play_map(){
 				   echo ""
 				   color=("32" "31" "33" "94" "36" "96") ; color_size=${#color[@]} ; y=${color[$(( $RANDOM % color_size ))]}
 				   echo -en "\e[${y}m"
-				   tableau=("monster1.txt" "monster2.txt" "monster3.txt" "monster4.txt") ; tab_size=${#tableau[@]} ; cat ${tableau[$(( $RANDOM % tab_size ))]}
+				   tableau=("monster1.txt" "monster2.txt" "monster3.txt" "monster4.txt") ; tab_size=${#tableau[@]} ; monster=${tableau[$(( $RANDOM % tab_size ))]}
 				   echo -en "\e[39m" 
 				   echo ""
 				   echo ""
+				   echo "You don't how his strength yet, you might have to try it"
 				   x=$(generate_monsters)
-				   echo "current monster (hp,str,xp) : $x"
 				   stats_p=$(get_player_stats)
-				   echo "current Player (hp,str,mana) : $stats_p"
 				   line_separator_ingame
-				   fight_PvM $x $stats_p
+				   fight_PvM $x $stats_p $monster
 				   
 				   
 				   
 				   #fight_monster
 				done
+				sleep 1
+				clear
 				;;
 			2)
 				#CHEST-------------------
@@ -107,7 +114,6 @@ play_map(){
 				echo "You found : $item !!!"
 				echo $item >> inventory.txt
 				return $result
-				
 				;;
 			3)
 				#TOWN--------------------
@@ -186,7 +192,20 @@ get_current_max_hp_player(){
 	hp=$(cut -d ":" -f 2 <<< "$x")
 return $hp
 }
-
+check_hp(){
+	get_current_max_hp_player
+	hp=$?
+	if [ $hp -lt 0 ] || [ $hp -eq 0 ];
+		then
+		echo "-----YOU LOOOOOSTTTTT-----"
+		exit
+	fi
+}
+get_current_max_base_hp_player(){
+	x=$(sed -n '5p' < stats.txt)
+	base_hp=$(cut -d ":" -f 2 <<< "$x")
+return $base_hp
+}
 #*************************************************
 # GET MAX XP OF PLAYER
 #*************************************************
@@ -195,7 +214,6 @@ get_current_max_xp_player(){
 	xp=$(cut -d ":" -f 2 <<< "$x")
 return $xp
 }
-
 #*************************************************
 # GET MAX STR OF PLAYER
 #*************************************************
@@ -219,6 +237,8 @@ return $mana
 # Fight function
 #*************************************************
 fight_PvM(){	
+
+
 	monster=$1
 	player=$2
 	#------Monster---
@@ -231,6 +251,9 @@ fight_PvM(){
 	player_mana=$(cut -d ":" -f 3 <<< "$player")
 	while [ "$monster_hp" -gt "0" -a "$player_hp" -gt "0" ];
 	do	
+		echo -en "\e[${y}m"
+	    cat $3
+	    echo -en "\e[39m" 
 		echo ""
 		echo ""
 		echo "-----------------------------------------------------"
@@ -247,6 +270,7 @@ fight_PvM(){
 
 				generate_dmg
 				dmg=$?
+				clear
 				line_separator_ingame_fight
 				echo "You did : $dmg DMG -> MONSTER"
 				monster_hp_tmp=$monster_hp
@@ -256,13 +280,20 @@ fight_PvM(){
 				echo "Monster : $dmg DMG -> YOU"
 				player_hp=$((player_hp - dmg_monster))
 				echo "                             -INFO-"
-				echo "[current monster (hp,str,xp) : $monster_hp:$monster_str ]                                       "
-				echo "[your current state (hp,str,mana) : $player_hp:$player_str:$player_mana ]"
+				echo "[MONSTER HP | $monster_hp HP]                                       "
+				echo "[YOUR HP | $player_hp HP]"
+				echo "[YOUR MP | $player_mana MP]"
+
 				line_separator_ingame_outfight
+				check_hp
+				sleep 2
+				
 
 				;;
 			2)
 				echo "you blocked"
+				sleep 2
+				clear
 				;;
 			3)
 				if [ $((RANDOM%2)) -eq "0" ]
@@ -282,6 +313,9 @@ fight_PvM(){
 					echo "                             ------"
 					line_separator_ingame_outfight
 				fi
+				check_hp
+				sleep 2
+				clear
 				;;
 			*)
 				echo "Is it that hard to type a number between 1 and 3 ?"
@@ -294,6 +328,7 @@ fight_PvM(){
 	xp=$?
 	sed -i -e "s/^hp:[0-9]*/hp:$player_hp/g" ./stats.txt
 	sed -i -e "s/^xp:[0-9]*/xp:$((xp + monster_xp))/g" ./stats.txt
+	check_xp
 
 }
 
@@ -325,7 +360,30 @@ generate_dmg_monster(){
 	return $dmg
 }
 
+check_xp(){
+get_current_max_xp_player
+xp=$?
+if [ $xp -gt 10 ]
+	then
+	sleep 1
+	echo "LEVEL UPPPP"
+	sed -i -e "s/^xp:[0-9]*/xp:0/g" ./stats.txt
+	sleep 2
+	upstat
+fi
+}
 
+upstat(){
+get_current_max_base_hp_player
+base_hp=$?
+sed -i -e "s/^hp:[0-9]*/hp:$(( base_hp + 10 ))/g" ./stats.txt
+get_current_max_str_player
+str=$?
+sed -i -e "s/^str:[0-9]*/str:$(( str + 10 ))/g" ./stats.txt
+get_current_max_mana_player
+mana=$?
+sed -i -e "s/^mana:[0-9]*/mana:$(( mana + 10 ))/g" ./stats.txt
+}
 open_inventory(){
 
 

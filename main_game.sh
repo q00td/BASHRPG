@@ -12,6 +12,7 @@
 # Version : 0.5 Closed Beta
 
 # This is a one path Rogue like RPG based on the "In real life" RPG
+clear
 my_dir="$(dirname $0)"
 source "${my_dir}/class_functions.sh"
 init
@@ -42,22 +43,18 @@ do
 
     case ${class_nb} in
         1)
-            echo "choix : warrior"
             init_class $class_nb
             break
             ;;
         2)
-            echo "choix : classe thief"
             init_class $class_nb
             break
             ;;
         3)
-            echo "choix : classe Mage"
             init_class $class_nb
             break
             ;;
         4)
-            echo "choix : classe Ranger"
             init_class $class_nb
             break
             ;;
@@ -73,7 +70,9 @@ done
  
 
 echo "Here is your stats : "
+echo "┌---------------------------------┐"
 cat "stats.txt"
+echo "└---------------------------------┘"
 waiting2
 #TODO : Show stats 
 
