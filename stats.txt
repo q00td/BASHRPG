@@ -1,0 +1,6 @@
+str:13
+mana:4
+hp:40
+xp:0
+base_hp:40
+gold:30

@@ -9,6 +9,7 @@ init_class(){
 			echo "hp:50">>stats.txt
 			echo "xp:0">>stats.txt
 			echo "base_hp:50">>stats.txt
+			echo "gold:30">>stats.txt
             ;;
         2)
             #thief-------------------
@@ -17,6 +18,8 @@ init_class(){
 			echo "hp:30">>stats.txt
 			echo "xp:0">>stats.txt
 			echo "base_hp:30">>stats.txt
+			echo "gold:30">>stats.txt
+			
 
 
 
@@ -28,6 +31,7 @@ init_class(){
 			echo "hp:35">>stats.txt
 			echo "xp:0">>stats.txt
 			echo "base_hp:35">>stats.txt
+			echo "gold:30">>stats.txt
 
             ;;
         4)
@@ -37,6 +41,7 @@ init_class(){
 			echo "hp:40">>stats.txt
             echo "xp:0">>stats.txt
 			echo "base_hp:40">>stats.txt
+			echo "gold:30">>stats.txt
 
 			;;
         *)  #------------------------
@@ -46,27 +51,33 @@ init_class(){
 }
 
 choose_map(){
+	clear
 	rnd=$((RANDOM%10))
 	case ${rnd} in
-			[0-1])
+			[0-5])
 				#MONSTER-----------------
 				echo "Oh crap, you encounter some monsters"
 				result=1
-				return $result
+				return "$result"
 				;;
-			[2-3])
+			6)
 				#CHEST-------------------
 				echo "Look a chest !"
 				
 				result=2
-				return $result
+				return "$result"
 				;;
-			[4-10])
+			[7-9])
+				clear
 				#TOWN--------------------
-				tableau=("Salhem" "Small town" "Hell(it's a town)") ; tab_size=${#tableau[@]} ; str=${tableau[$(( $RANDOM % tab_size ))]} 
+				tableau=("Salhem" "Small town" "Hell(it's a town)") ; tab_size=${#tableau[@]} ; str=${tableau[$(( $RANDOM % tab_size ))]}
+				echo ""
+				tableau=("salhem.txt" "smalltown.txt" "hell.txt") ; tab_size=${#tableau[@]} ; cat ${tableau[$(( $RANDOM % tab_size ))]}
+				
 				tell_story1 "Welcome to $str ! "
 				result=3
-				return $result
+				echo ""
+				return "$result"
 				;;
 			*)  #------------------------
 				;;
@@ -124,6 +135,7 @@ play_map(){
 				   #fight_monster
 				done
 				sleep 1
+				clear
 				
 				;;
 			2)
@@ -139,6 +151,8 @@ play_map(){
 				;;
 			3)
 				#TOWN--------------------
+				: > shop.txt
+				init_shop
 				play_town
 				result=3
 				return $result
@@ -148,13 +162,59 @@ play_map(){
 				;;
 		esac
 }
-
+echo "test 15616rffef" | sed -n '/^[0-9]*$/p'
+get_defense(){
+	x=$(cat equipped.txt)
+	a=$(printf "%s" "$x" | sed -n '1p')
+	a=$(echo $a | sed 's/[^0-9]*//g')
+	if [ ${#a} -eq 0 ];
+	then 
+	a=0 
+	fi
+	echo ">$a<"
+	b=$(printf "%s" "$x" | sed -n '3p')
+	b=$(echo $b | sed 's/[^0-9]*//g')
+	if [ ${#b} -eq 0 ];
+	then 
+	b=0 
+	fi
+	c=$(printf "%s" "$x" | sed -n '4p')
+	c=$(echo $c | sed 's/[^0-9]*//g')
+	if [ ${#c} -eq 0 ];
+	then 
+	c=0 
+	fi
+	d=$(printf "%s" "$x" | sed -n '4p')
+	d=$(echo $d | sed 's/[^0-9]*//g')
+	if [ ${#d} -eq 0 ];
+	then 
+	d=0 
+	fi
+	e=$(printf "%s" "$x" | sed -n '6p')
+	e=$(echo $e | sed 's/[^0-9]*//g')
+	if [ ${#e} -eq 0 ];
+	then 
+	e=0 
+	fi
+	return  "$(( a + b + c + d + e ))"	
+}	
+get_attack(){
+	x=$(cat equipped.txt)
+	e=$(printf "%s" "$x" | sed -n '2p')
+	e=$(echo $e | sed 's/[^0-9]*//g')
+	if [ ${#e} -eq 0 ];
+	then 
+	e=0 
+	fi
+	echo $e
+	return $e
+}
 play_town(){
 while :
 do
 	echo "-----------------------------------------------------"
 			echo -e "| \e[4mChoose an action : \e[24m                                | "							
-			echo "|      1) Shop.                                       |"     
+			echo "|      1) Shop.                                      |"     
 			echo "|      2) Rest.                                      |" 
 			echo "|      3) Leave.                                     | "
 
@@ -166,7 +226,13 @@ do
 					shop
 					;;
 				2)
-					heal_hp
+					get_current_max_hp_player
+					hp=$?
+					sed -i -e "s/^hp:[0-9]*/hp:$((hp))/g" ./stats.txt
+					cat nurse.txt
+					echo ""
+					sleep 1
+					clear
 					;;
 				3)
 					break
@@ -180,7 +246,61 @@ done
 
 
 }
+init_shop(){
+local IFS=$'\n'
+for i in `shuf -n 5 database.txt`; do
+	echo "$i:$((RANDOM%20 + 20))" >> shop.txt
+	done
+}
+shop(){
+clear
+cat shop.txt | disp_hud_shop
+echo "     └> _____________________________________________________"
+echo -e "       |\e[4mWhat do you want to do : \e[24m                          |"
+echo "       |  X) Write number to equip/use                     |"
+echo "       |  q) or 'q' to Quit Shop                           |"
+echo "       ------------------------------------------------------"
+get_current_gold_player
+gold="$?"
+echo "       YOU HAVE $gold GOLD\$"
 
+while :
+	do
+	    read -r -p "Your choice : " context_choice
+
+	    case ${context_choice} in
+		[0-9]*)
+			buy_item ${context_choice}
+			break
+		    ;;
+		q)
+			break
+		    ;;
+		*)
+		    echo "Seriously could you just type a number between 1 & 2 ?"
+		    ;;
+	    esac
+	done
+}
+buy_item(){
+y=$1 #chiffre correspondant a une ligne dans l'inventaire
+itemX=$(sed -n ${y}p < shop.txt) #on récupere la string correspondant
+pos=$(cut -d ":" -f 4 <<< "$itemX") # on extrait les golds pour le Case
+get_current_gold_player
+gold="$?"
+if [ "$gold" -gt "$pos" ]
+then
+	sed -i -e "s/^gold:[0-9]*/gold:(( gold - pos ))/g" ./stats.txt
+	echo $itemX | cut -d":" -f1,2,3 >> inventory.txt
+	echo "Ka-Ching !"
+else
+	echo "You don't have enough golds"
+fi
+	
+
+echo ""
+clear
+}
 #*************************************************
 # MONSTER GENERATION
 #*************************************************
@@ -270,6 +390,14 @@ get_current_max_xp_player(){
 return $xp
 }
 #*************************************************
+# GET GOLD OF PLAYER
+#*************************************************
+get_current_gold_player(){
+	x=$(sed -n '6p' < stats.txt)
+	xp=$(cut -d ":" -f 2 <<< "$x")
+return $xp
+}
+#*************************************************
 # GET MAX STR OF PLAYER
 #*************************************************
 get_current_max_str_player(){
@@ -293,7 +421,11 @@ return $mana
 #*************************************************
 fight_PvM(){	
 
-
+	get_attack
+	attack="$?"
+	get_defense
+	def="$?"
+	
 	monster=$1
 	player=$2
 	#------Monster---
@@ -329,11 +461,19 @@ fight_PvM(){
 				line_separator_ingame_fight
 				echo "You did : $dmg DMG -> MONSTER"
 				monster_hp_tmp=$monster_hp
-				monster_hp=$((monster_hp_tmp - dmg))
+				monster_hp=$((monster_hp_tmp - dmg - attack))
 				generate_dmg_monster monster_str
 				dmg_monster=$?
+				
+				if [ $(( dmg_monster - def )) -lt "0" ]
+				then
+					dmg_final=0
+				else
+					dmg_final="(( dmg_monster - def ))"
+				fi
+				
 				echo "Monster : $dmg DMG -> YOU"
-				player_hp=$((player_hp - dmg_monster))
+				player_hp=$((player_hp - dmg_final))
 				echo "                             -INFO-"
 				echo "[MONSTER HP | $monster_hp HP]                                       "
 				echo "[YOUR HP | $player_hp HP]"
@@ -459,7 +599,7 @@ while :
 			liste | disp_hud
 		    ;;
 		2)
-			liste_bagpack #merci
+			cat inventory.txt | liste_bagpack #merci
 			equip
 			
 		    ;;
@@ -478,27 +618,32 @@ init(){ #CREATE ALL THE FILES TO SAVE DATA ( WEAPONS , INVENTORY ETC .. )
 #: > inventory.txt
 : > stats.txt
 : > equipped.txt
-echo "head=" >> equipped.txt
-echo "hand=" >> equipped.txt
-echo "offhand=" >> equipped.txt
-echo "chest=" >> equipped.txt
-echo "arm=" >> equipped.txt
-echo "legs=" >> equipped.txt
-
+: > shop.txt
+{
+echo "head="
+echo "hand="
+echo "offhand="
+echo "chest="
+echo "arm="
+echo "legs=" 
+} >> equipped.txt
 }
 
 
 liste_bagpack() {
-    
-	local idx=1
-	echo "┌-NAME:DAMAGE/DEFENSE:CTG-┐"
-	while read ligne 
-	do
-		echo "${idx}) $ligne"
-		((idx = idx + 1 ))
-		
-	done < inventory.txt
-	echo "└--------------------------┘"
+ x=1
+ local idx
+  printf "┌%*s┬%*s┐\n" "40" "-Name- " "10" "-Power-" | sed 's/ /─/g ; s/-/ /g'
+  while read l ; do
+    un=${l%%:*}
+    deux=${l#$un:}
+    deux=${deux%%:*}
+
+    padding=$(( -40 - $(wc -c <<<$l) + ${#l} +1 ))
+    printf "│%*s│%*s│\n" "$padding" "${x})$un" "10" "$deux"
+	((x++))
+  done
+  printf "└%*s┴%*s┘\n" "40" "" "10" "" | sed 's/ /─/g'
 	
 }
 
@@ -534,11 +679,38 @@ disp_hud() {
   printf "└%*s┴%*s┘\n" "40" "" "10" "" | sed 's/ /─/g'
 }
 
+
+disp_hud_shop() {
+  declare -a right=(
+" o     "
+" /|\    "
+" / \    "
+)
+  local idx
+x=1
+  printf "┌%*s┬%*s┬%*s┐\n" "40" "-Item- " "10" "Power" "10" "Price" | sed 's/ /─/g ; s/-/ /g'
+  while read l ; do
+	
+    un=${l%%:*}
+    deux=${l#$un:}
+    deux=${deux%%:*}
+	trois=${l#$un:$deux:}
+	trois=${trois%%:*}
+    quatre=${l##*:}
+    padding=$(( -40 - $(wc -c <<<$un) + ${#un} +1 ))
+    printf "│%*s│%*s│%*s│\n" "$padding" "${x})$un" "10" "$deux" "10" "$quatre"
+	((x++))
+  done
+  printf "└%*s┴%*s┴%*s┘\n" "40" "" "10" "" "10" "" | sed 's/ /─/g'
+}
+
+
+
 equip(){
 echo "     └> _____________________________________________________"
 echo -e "       |\e[4mWhat do you want to do : \e[24m                        |"
-echo "       |  ) Write number to equip/use                      |"
-echo "       |  2) or 'q' to Quit inventory                      |"
+echo "       |  X) Write number to equip/use                     |"
+echo "       |  q) or 'q' to Quit inventory                      |"
 echo "       ------------------------------------------------------"
 
 while :
