@@ -78,6 +78,7 @@ choose_map(){
 				result=3
 				echo ""
 				return "$result"
+
 				;;
 			*)  #------------------------
 				;;
@@ -171,7 +172,7 @@ get_defense(){
 	then 
 	a=0 
 	fi
-	echo ">$a<"
+
 	b=$(printf "%s" "$x" | sed -n '3p')
 	b=$(echo $b | sed 's/[^0-9]*//g')
 	if [ ${#b} -eq 0 ];
@@ -198,6 +199,14 @@ get_defense(){
 	fi
 	return  "$(( a + b + c + d + e ))"	
 }	
+low_hp(){
+	if [ $1 -lt 10 ];
+		then
+		echo -e "\e[5m \e[31m $1 \e[0m"
+	else
+		echo "$1"
+	fi
+}
 get_attack(){
 	x=$(cat equipped.txt)
 	e=$(printf "%s" "$x" | sed -n '2p')
@@ -206,7 +215,6 @@ get_attack(){
 	then 
 	e=0 
 	fi
-	echo $e
 	return $e
 }
 play_town(){
@@ -290,11 +298,12 @@ get_current_gold_player
 gold="$?"
 if [ "$gold" -gt "$pos" ]
 then
-	sed -i -e "s/^gold:[0-9]*/gold:(( gold - pos ))/g" ./stats.txt
+	sed -i -e "s/^gold:[0-9]*/gold:$(( gold - pos ))/g" ./stats.txt
 	echo $itemX | cut -d":" -f1,2,3 >> inventory.txt
 	echo "Ka-Ching !"
 else
 	echo "You don't have enough golds"
+	sleep 1
 fi
 	
 
@@ -368,9 +377,7 @@ get_current_max_hp_player(){
 return $hp
 }
 check_hp(){
-	get_current_max_hp_player
-	hp=$?
-	if [ $hp -lt 0 ] || [ $hp -eq 0 ];
+	if [ "$1" -lt "0" ] || [ "$1" -eq "0" ];
 		then
 		echo "-----YOU LOOOOOSTTTTT-----"
 		exit
@@ -475,13 +482,13 @@ fight_PvM(){
 				echo "Monster : $dmg DMG -> YOU"
 				player_hp=$((player_hp - dmg_final))
 				echo "                             -INFO-"
-				echo "[MONSTER HP | $monster_hp HP]                                       "
-				echo "[YOUR HP | $player_hp HP]"
+				echo "[MONSTER HP | $(low_hp $monster_hp) HP]                                       "
+				echo "[YOUR HP | $(low_hp $player_hp) HP]"
 				echo "[YOUR MP | $player_mana MP]"
 
 				line_separator_ingame_outfight
-				check_hp
-				sleep 2
+				check_hp $player_hp
+				
 				
 
 				;;
@@ -504,13 +511,14 @@ fight_PvM(){
 					echo "Monster : $dmg DMG -> YOU"
 					player_hp=$((player_hp - dmg_monster))
 					echo "                             -INFO-"
-					echo "[current monster (hp,str,xp) : $monster_hp:$monster_str ]                                       "
-					echo "[your current state (hp,str,mana) : $player_hp:$player_str:$player_mana ]"
+					echo "[MONSTER HP | $(low_hp $monster_hp) HP]                                       "
+					echo "[YOUR HP | $(low_hp $player_hp) HP]"
+					echo "[YOUR MP | $player_mana MP]"
 					echo "                             ------"
 					line_separator_ingame_outfight
 				fi
-				check_hp
-				sleep 2
+				check_hp $player_hp
+				sleep 1
 				clear
 				;;
 			*)
@@ -524,7 +532,10 @@ fight_PvM(){
 	get_current_max_xp_player
 	xp=$?
 	sed -i -e "s/^hp:[0-9]*/hp:$player_hp/g" ./stats.txt
-	sed -i -e "s/^xp:[0-9]*/xp:$((xp + monster_xp))/g" ./stats.txt
+	if [ "$monster_hp" -lt "0" ] | [ "$monster_hp" -eq "0" ] ;
+	then
+		sed -i -e "s/^xp:[0-9]*/xp:$((xp + monster_xp))/g" ./stats.txt
+	fi
 	check_xp
 
 }
@@ -618,6 +629,7 @@ init(){ #CREATE ALL THE FILES TO SAVE DATA ( WEAPONS , INVENTORY ETC .. )
 #: > inventory.txt
 : > stats.txt
 : > equipped.txt
+shuf -n1 database.txt > inventory.txt
 : > shop.txt
 {
 echo "head="

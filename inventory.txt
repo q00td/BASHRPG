@@ -1,15 +1,2 @@
-helmet:7:hl
-katana:15:p
-chest:15:c
-sword:5:p
-bow:10:p
-helmet:7:hl
-legs:8:l
-chest:15:c
-legs:8:l
-gauntlet:7:g
-helmet:7:hl
-legs:8:l:27
-gauntlet:7:g
-bow:10:p:20
-bow:10:p
+gauntlet:1:g
+katana:2:p
