@@ -9,8 +9,8 @@
 ############################################
 
 # Author : Quentin OTERNAUD , Quentin GANDILLET
-# Previous versions : 0.3,0.5
-# Version : 0.70 Closed Beta
+# Previous versions : 0.3-0.5-0.7-1.0-2.0
+# Version : 3.00 Closed Beta
 
 # This is a one path Rogue like RPG based on the RPG you can play in real life 
 clear
@@ -18,7 +18,7 @@ my_dir="$(dirname $0)"
 source "${my_dir}/class_functions.sh"
 
 echo -e "\e[5m Press a key to skip... \e[25m "
-tell_story2 "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras molestie eros at libero aliquam, et consectetur mi laoreet. Quisque nec ex bibendum, vestibulum ipsum nec, gravida tortor. Cras tincidunt, lacus eu cursus ullamcorper, diam nisi sagittis sem, eget consequat urna tortor eu ligula. Quisque id purus eu nunc malesuada sagittis at quis erat. Morbi laoreet finibus risus, sed auctor est. Nam pulvinar lectus mauris, et porta nulla imperdiet sit amet. Sed et tristique tellus, eget blandit nunc. In aliquet nec odio a scelerisque. Praesent consequat auctor tortor viverra tincidunt. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Duis id egestas enim. Proin vel euismod libero, non molestie eros. Nam id condimentum turpis. "
+tell_story2 "Once upon a time, a Young adventurer called Elyos who only activity was to hunt deers to feed his sister, found the entrance to a another world, so dark and so deep into the earth that no one would even want to go through that gate. But one day his last member of his family, her sister, suddenly dissapeared. The only trail he had was some blood following a path, leading to the gate he found before. This the Quest about finding the last thing you treasure the most. This is your Quest.."
 echo "---------------------------------------------------------------------------------"
 echo ""
 echo ""
@@ -51,10 +51,10 @@ read -r -p "Do you want to continue your last game ? y/n : " context_choice
 		n)
 			init
 		   	echo -e " \e[4m So which Class would you like to pick :\e[24m"
-			tell_story1 "      1) Warrior (Tank/Damage)"
-			tell_story1 "      2) Thief (High Damage/chance of evading)" 
-			tell_story1 "      3) Mage (Very high damage)"
-			tell_story1 "      4) Ranger (Average damage/ chance of double attack )"
+			tell_story1 "      1) Warrior (Tank/ special attack heal on hit)"
+			tell_story1 "      2) Thief (High Damage/Steal item on special attack)" 
+			tell_story1 "      3) Mage (Very high damage/ Very high damage special attack)"
+			tell_story1 "      4) Ranger (Average damage/ high damage special attack)"
 
 			while :
 			do

@@ -1,5 +1,5 @@
-shield:2:d:35
-legs:2:l:28
-helmet:1:hl:28
-mana:15:m:24
-chest:3:c:25
+shield:2:d:30
+legs:2:l:24
+bow:3:p:32
+chest:3:c:28
+longsword:3:p:35

@@ -10,6 +10,7 @@ init_class(){
 			echo "xp:0">>stats.txt
 			echo "base_hp:50">>stats.txt
 			echo "gold:30">>stats.txt
+			echo "warrior">>stats.txt
             ;;
         2)
             #thief-------------------
@@ -19,7 +20,7 @@ init_class(){
 			echo "xp:0">>stats.txt
 			echo "base_hp:30">>stats.txt
 			echo "gold:30">>stats.txt
-			
+			echo "thief">>stats.txt
 
 
 
@@ -32,6 +33,7 @@ init_class(){
 			echo "xp:0">>stats.txt
 			echo "base_hp:35">>stats.txt
 			echo "gold:30">>stats.txt
+			echo "mage">>stats.txt
 
             ;;
         4)
@@ -42,6 +44,7 @@ init_class(){
             echo "xp:0">>stats.txt
 			echo "base_hp:40">>stats.txt
 			echo "gold:30">>stats.txt
+			echo "ranger">>stats.txt
 
 			;;
         *)  #------------------------
@@ -163,7 +166,6 @@ play_map(){
 				;;
 		esac
 }
-echo "test 15616rffef" | sed -n '/^[0-9]*$/p'
 get_defense(){
 	x=$(cat equipped.txt)
 	a=$(printf "%s" "$x" | sed -n '1p')
@@ -454,7 +456,8 @@ fight_PvM(){
 		echo -e "| \e[4mChoose an action : \e[24m                                | "							
 		echo "|      1) Attack (Melee)                             |"     
 		echo "|      2) Block(Slight chance to counter attack)     |" 
-		echo "|      3) Run away like a Coward !                   | "
+		echo "|      3) Special attack (MP)                        |"
+		echo "|      4) Run away like a Coward !                   | "
 
 		read -r -p "| Your choice [1..3] : " choice
 		echo "-----------------------------------------------------"
@@ -498,6 +501,49 @@ fight_PvM(){
 				clear
 				;;
 			3)
+			clear
+			class=$(get_class)
+
+			if [ $player_mana -gt "0" ]
+				then
+				case ${class} in
+				"warrior")
+					generate_magic_dmg_warrior
+					dmg=$?
+					monster_hp=$((monster_hp - dmg))
+				    ;;
+				"thief")
+					generate_magic_dmg_thief
+					dmg=$?
+					monster_hp=$((monster_hp - dmg))
+				    ;;
+				"mage")
+					generate_magic_dmg_mage
+					dmg=$?
+					monster_hp=$((monster_hp - dmg))
+				    ;;
+				"ranger")
+					generate_magic_dmg_ranger
+					dmg=$?
+					monster_hp=$((monster_hp - dmg))
+				    ;;
+	   		esac
+	   		player_mana=$((player_mana - 1 ))
+			sed -i -e "s/^mana:[0-9]*/mana:$player_mana/g" ./stats.txt
+
+			echo "                             -INFO-"
+			echo "[MONSTER HP | $(low_hp $monster_hp) HP]                                       "
+			echo "[YOUR HP | $(low_hp $player_hp) HP]"
+			echo "[YOUR MP | $player_mana MP]"
+			echo "                             ------"
+
+			else
+				echo "You dont have any MP"
+			fi
+			
+
+			;;
+			4)
 				if [ $((RANDOM%2)) -eq "0" ]
 				then
 					echo "You ran away from this fight (No XP,No L00T)"
@@ -538,6 +584,24 @@ fight_PvM(){
 	fi
 	check_xp
 
+}
+get_class(){
+	tmp=$(sed -n 7p stats.txt) #ON RECUPERE CURRENT WEAPON
+	echo $tmp
+
+}
+generate_magic_dmg_warrior(){
+	return $((RANDOM%10 + 10))
+}
+generate_magic_dmg_mage(){
+	return $((RANDOM%15 + 15))
+}
+generate_magic_dmg_thief(){
+	shuf -n1 database.txt >> inventory.txt
+	return $((RANDOM%5 + 5))
+}
+generate_magic_dmg_ranger(){
+	return $((RANDOM%10 + 10))
 }
 
 line_separator_ingame(){
