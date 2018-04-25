@@ -1,7 +1,7 @@
-legs:2:l
 mana:15:m
 mana:15:m
-heal:15:h
-bow:3:p
+mana:15:m
+katana:2:p
 chest:3:c
-heal:15:h
+bow:3:p
+legs:2:l

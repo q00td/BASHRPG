@@ -1,7 +1,7 @@
 str:15
-mana:3
-hp:23
+mana:2
+hp:30
 xp:0
 base_hp:30
-gold:30
+gold:3
 thief

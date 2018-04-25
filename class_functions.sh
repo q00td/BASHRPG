@@ -236,11 +236,13 @@ do
 					shop
 					;;
 				2)
-					get_current_max_hp_player
+					get_current_max_base_hp_player
 					hp=$?
 					sed -i -e "s/^hp:[0-9]*/hp:$((hp))/g" ./stats.txt
+					sed -i -e "s/^mana:[0-9]*/mana:5/g" ./stats.txt
 					cat nurse.txt
 					echo ""
+					cat stats.txt
 					sleep 1
 					clear
 					;;
@@ -502,6 +504,7 @@ fight_PvM(){
 				;;
 			3)
 			clear
+			line_separator_ingame_fight
 			class=$(get_class)
 
 			if [ $player_mana -gt "0" ]
@@ -530,7 +533,19 @@ fight_PvM(){
 	   		esac
 	   		player_mana=$((player_mana - 1 ))
 			sed -i -e "s/^mana:[0-9]*/mana:$player_mana/g" ./stats.txt
-
+			echo "You did : $dmg DMG -> MONSTER"
+			generate_dmg_monster monster_str
+			dmg_monster=$?
+				
+			if [ $(( dmg_monster - def )) -lt "0" ]
+				then
+					dmg_final=0
+				else
+					dmg_final="(( dmg_monster - def ))"
+				fi
+				
+			echo "Monster : $dmg DMG -> YOU"
+			player_hp=$((player_hp - dmg_final))
 			echo "                             -INFO-"
 			echo "[MONSTER HP | $(low_hp $monster_hp) HP]                                       "
 			echo "[YOUR HP | $(low_hp $player_hp) HP]"
@@ -541,7 +556,7 @@ fight_PvM(){
 				echo "You dont have any MP"
 			fi
 			
-
+			check_hp $player_hp
 			;;
 			4)
 				if [ $((RANDOM%2)) -eq "0" ]
@@ -575,11 +590,15 @@ fight_PvM(){
 		
 		
 	done
+	cat cup.txt
+		tell_story2 " You survived this fight !!!..."
 	get_current_max_xp_player
 	xp=$?
 	sed -i -e "s/^hp:[0-9]*/hp:$player_hp/g" ./stats.txt
 	if [ "$monster_hp" -lt "0" ] | [ "$monster_hp" -eq "0" ] ;
 	then
+		
+		exit
 		sed -i -e "s/^xp:[0-9]*/xp:$((xp + monster_xp))/g" ./stats.txt
 	fi
 	check_xp
@@ -671,11 +690,14 @@ while :
 
 	    case ${context_choice} in
 		1)
+			clear
 			liste | disp_hud
 		    ;;
 		2)
+			clear
 			cat inventory.txt | liste_bagpack #merci
 			equip
+			clear
 			
 		    ;;
 		3)
@@ -687,6 +709,7 @@ while :
 		    ;;
 	    esac
 	done
+	clear
 }
 
 init(){ #CREATE ALL THE FILES TO SAVE DATA ( WEAPONS , INVENTORY ETC .. )
@@ -733,7 +756,11 @@ liste() {
   offhand=$(cut -d "=" -f 2 <<< "$z")
   alpha=$(sed -n '4p' < equipped.txt)
   chest=$(cut -d "=" -f 2 <<< "$alpha")
-  echo "$hand $offhand $chest"
+
+  arm=$(sed -n '4p' < equipped.txt)
+  arm2=$(cut -d "=" -f 2 <<< "$arm")
+
+  echo "$hand $offhand $chest $arm2"
   beta=$(sed -n '6p' < equipped.txt)
   leg=$(cut -d "=" -f 2 <<< "$beta")
   echo "$leg"

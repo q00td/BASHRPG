@@ -104,7 +104,7 @@ done
 #TODO : A function that put all the data inside a txt file
 
  
-
+clear
 echo "Here is your stats : "
 echo "┌---------------------------------┐"
 cat "stats.txt"

@@ -1,5 +1,4 @@
-shield:2:d:30
-legs:2:l:24
-bow:3:p:32
-chest:3:c:28
-longsword:3:p:35
+sword:1:p:24
+heal:15:h:38
+chest:3:c:38
+spear:2:p:20
