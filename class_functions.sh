@@ -60,8 +60,7 @@ init_class(){
 test_hud(){
 
 	clear
-	printf "\e[$((1));$((x-9))H"
-	printf %s "STATS : "
+	
 	ecran=$(stty size | {
 	read y x
 	for((i=0;i<10;i++)) ; do
@@ -105,6 +104,9 @@ test_hud(){
 	a=$(printf "%s" "$z" | sed -n '8p')
 	printf "\e[$((9));$((x-9))H"
 	printf %s "$a"
+
+	printf "\e[$((2));$((x-9))H"
+	printf %s "STATS : "
 
 	printf "\e[$((0));$((x))H"
 	printf %s "┐"
