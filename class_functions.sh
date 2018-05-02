@@ -11,6 +11,7 @@ init_class(){
 			echo "base_hp:50">>stats.txt
 			echo "gold:30">>stats.txt
 			echo "warrior">>stats.txt
+			echo "lvl:1">>stats.txt
             ;;
         2)
             #thief-------------------
@@ -21,6 +22,7 @@ init_class(){
 			echo "base_hp:30">>stats.txt
 			echo "gold:30">>stats.txt
 			echo "thief">>stats.txt
+			echo "lvl:1">>stats.txt
 
 
 
@@ -34,6 +36,7 @@ init_class(){
 			echo "base_hp:35">>stats.txt
 			echo "gold:30">>stats.txt
 			echo "mage">>stats.txt
+			echo "lvl:1">>stats.txt
 
             ;;
         4)
@@ -45,6 +48,7 @@ init_class(){
 			echo "base_hp:40">>stats.txt
 			echo "gold:30">>stats.txt
 			echo "ranger">>stats.txt
+			echo "lvl:1">>stats.txt
 
 			;;
         *)  #------------------------
@@ -53,8 +57,74 @@ init_class(){
     esac
 }
 
+test_hud(){
+
+	clear
+	printf "\e[$((1));$((x-9))H"
+	printf %s "STATS : "
+	ecran=$(stty size | {
+	read y x
+	for((i=0;i<10;i++)) ; do
+		printf "\e[%d;%dH%s" "$((i))" "$((x))" "│"
+	done
+	for((i=0;i<10;i++)) ; do
+		printf "\e[%d;%dH%s" "$((i))" "$((x-10))" "│"
+	done
+	for((i=1;i<10;i++))     ; do
+		printf "\e[%d;%dH%s" "0" "$((x-i))" "─"
+	done
+	for((i=1;i<10;i++)) ; do
+		printf "\e[%d;%dH%s" "10" "$((x-i))" "─"
+	done 
+	for((i=1;i<10;i++)) ; do
+		printf "\e[%d;%dH%s" "3" "$((x-i))" "─"
+	done 
+
+	z=$(cat stats.txt)
+
+	a=$(printf "%s" "$z" | sed -n '1p')
+	printf "\e[$((4));$((x-9))H"
+	printf %s "$a"
+
+	a=$(printf "%s" "$z" | sed -n '2p')
+	printf "\e[$((5));$((x-9))H"
+	printf %s "$a"
+
+	a=$(printf "%s" "$z" | sed -n '3p')
+	printf "\e[$((6));$((x-9))H"
+	printf %s "$a"
+
+	a=$(printf "%s" "$z" | sed -n '4p')
+	printf "\e[$((7));$((x-9))H"
+	printf %s "$a"
+
+	a=$(printf "%s" "$z" | sed -n '6p')
+	printf "\e[$((8));$((x-9))H"
+	printf %s "$a"
+
+	a=$(printf "%s" "$z" | sed -n '8p')
+	printf "\e[$((9));$((x-9))H"
+	printf %s "$a"
+
+	printf "\e[$((0));$((x))H"
+	printf %s "┐"
+	printf "\e[$((0));$((x-10))H"
+	printf %s "┌"
+	printf "\e[$((10));$((x))H"
+	printf %s "┘"
+	printf "\e[$((10));$((x-10))H"
+	printf %s "└"
+
+	printf "\e[$((0));$((0))H"
+
+} 
+)
+echo $ecran
+}
+
 choose_map(){
 	clear
+	test_hud
 	rnd=$((RANDOM%10))
 	case ${rnd} in
 			[0-5])
@@ -72,6 +142,7 @@ choose_map(){
 				;;
 			[7-9])
 				clear
+				test_hud
 				#TOWN--------------------
 				tableau=("Salhem" "Small town" "Hell(it's a town)") ; tab_size=${#tableau[@]} ; str=${tableau[$(( $RANDOM % tab_size ))]}
 				echo ""
@@ -107,6 +178,7 @@ tell_story2(){ #For the little scene in the intro
 		read -t $t -n1 -s &&  echo "${str:$((i))}" && break || printf "${str:$i:1}"
 	done
 	read -n1 -s ; clear
+	test_hud
 }
 play_map(){
 	case ${1} in
@@ -118,6 +190,7 @@ play_map(){
 				nb_monster=$((RANDOM%3))
 				for ((i=0; i<=nb_monster; i++)); do
 				   clear
+				   test_hud
 				   line_separator_ingame
 				   echo ""
 				   color=("32" "31" "33" "94" "36" "96") ; color_size=${#color[@]} ; y=${color[$(( $RANDOM % color_size ))]}
@@ -139,11 +212,13 @@ play_map(){
 				done
 				sleep 1
 				clear
+				test_hud
 				
 				;;
 			2)
 				#CHEST-------------------
 				clear
+				test_hud
 				cat chest.txt
 				result=2
 			
@@ -244,12 +319,14 @@ do
 					cat stats.txt
 					sleep 1
 					clear
+					test_hud
 					;;
 				3)
 					break
 					;;
 				*)
 					clear
+					test_hud
 					echo "Is it that hard to type a number between 1 and 3 ?"
 					;;
 			esac
@@ -265,6 +342,7 @@ for i in `shuf -n 5 database.txt`; do
 }
 shop(){
 clear
+test_hud
 cat shop.txt | disp_hud_shop
 echo "     └> _____________________________________________________"
 echo -e "       |\e[4mWhat do you want to do : \e[24m                          |"
@@ -312,6 +390,7 @@ fi
 
 echo ""
 clear
+test_hud
 }
 #*************************************************
 # MONSTER GENERATION
@@ -399,6 +478,17 @@ get_current_max_xp_player(){
 	xp=$(cut -d ":" -f 2 <<< "$x")
 return $xp
 }
+
+#*************************************************
+# GET LEVEL OF PLAYER
+#*************************************************
+get_current_level_player(){
+	x=$(sed -n '7p' < stats.txt)
+	lvl=$(cut -d ":" -f 2 <<< "$x")
+return $lvl
+}
+
+
 #*************************************************
 # GET GOLD OF PLAYER
 #*************************************************
@@ -469,6 +559,7 @@ fight_PvM(){
 				generate_dmg
 				dmg=$?
 				clear
+				test_hud
 				line_separator_ingame_fight
 				echo "You did : $dmg DMG -> MONSTER"
 				monster_hp_tmp=$monster_hp
@@ -500,9 +591,11 @@ fight_PvM(){
 				echo "you blocked"
 				sleep 2
 				clear
+				test_hud
 				;;
 			3)
 			clear
+			test_hud
 			line_separator_ingame_fight
 			class=$(get_class)
 
@@ -566,6 +659,7 @@ fight_PvM(){
 					line_separator_ingame_fight
 					echo "you failed to run away"
 					clear
+					test_hud
 					generate_dmg_monster monster_str
 					dmg_monster=$?
 					echo "Monster : $dmg DMG -> YOU"
@@ -580,9 +674,11 @@ fight_PvM(){
 				check_hp $player_hp
 				sleep 1
 				clear
+				test_hud
 				;;
 			*)
 				clear
+				test_hud
 				echo "Is it that hard to type a number between 1 and 3 ?"
 				;;
 		esac
@@ -652,12 +748,17 @@ generate_dmg_monster(){
 
 check_xp(){
 get_current_max_xp_player
+
+
 xp=$?
+get_current_level_player
+lvl=$?
 if [ $xp -gt 10 ]
 	then
 	sleep 1
 	echo "LEVEL UPPPP"
 	sed -i -e "s/^xp:[0-9]*/xp:0/g" ./stats.txt
+	sed -i -e "s/^lvl:[0-9]*/lvl:$((lvl + 1))/g" ./stats.txt
 	sleep 2
 	upstat
 fi
@@ -690,17 +791,21 @@ while :
 	    case ${context_choice} in
 		1)
 			clear
+			test_hud
 			liste | disp_hud
 		    ;;
 		2)
 			clear
+			test_hud
 			cat inventory.txt | liste_bagpack #merci
 			equip
 			clear
+			test_hud
 			
 		    ;;
 		3)
 			clear
+			test_hud
 			break
 		    ;;
 		*)
@@ -709,6 +814,7 @@ while :
 	    esac
 	done
 	clear
+	test_hud
 }
 
 init(){ #CREATE ALL THE FILES TO SAVE DATA ( WEAPONS , INVENTORY ETC .. )

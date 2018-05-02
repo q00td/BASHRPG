@@ -1,4 +1,0 @@
-sword:1:p:24
-heal:15:h:38
-chest:3:c:38
-spear:2:p:20

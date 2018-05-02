@@ -1,7 +1,1 @@
-mana:15:m
-mana:15:m
-mana:15:m
-katana:2:p
-chest:3:c
-bow:3:p
-legs:2:l
+helmet:1:hl

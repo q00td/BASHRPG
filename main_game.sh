@@ -35,6 +35,7 @@ echo "--------------------------------------------------------------------------
 echo ""
 
 clear
+
 while :
 do
 read -r -p "Do you want to continue your last game ? y/n : " context_choice
@@ -97,7 +98,7 @@ read -r -p "Do you want to continue your last game ? y/n : " context_choice
 
 
 done
-
+test_hud
 
 
 
