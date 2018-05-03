@@ -1,4 +1,5 @@
-sword:1:p:23
-chest:3:c:21
-legs:2:l:24
-shield:2:d:39
+bow:3:p:34
+longsword:3:p:33
+katana:2:p:35
+legs:2:l:33
+sword:1:p:28

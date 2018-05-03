@@ -316,8 +316,9 @@ do
 	echo "┌────────────────────────────────────────────────────┐"
 			echo -e "| \e[4mChoose an action : \e[24m                                | "							
 			echo "│      1) Shop.                                      │"     
-			echo "│      2) Rest.                                      │" 
-			echo "│      3) Leave.                                     │ "
+			echo "│      2) Sell.                                      │"     
+			echo "│      3) Rest.                                      │" 
+			echo "│      4) Leave.                                     │ "
 
 			read -r -p "| Your choice [1..3] : " choice
 			echo "└───────────────────────────────────────────────────┘"
@@ -327,6 +328,9 @@ do
 					shop
 					;;
 				2)
+					sell
+					;;
+				3)
 					get_current_max_base_hp_player
 					hp=$?
 					sed -i -e "s/^hp:[0-9]*/hp:$((hp))/g" ./stats.txt
@@ -338,7 +342,7 @@ do
 					clear
 					test_hud
 					;;
-				3)
+				4)
 					break
 					;;
 				*)
@@ -388,6 +392,40 @@ while :
 	    esac
 	done
 }
+
+sell(){
+clear
+test_hud
+cat inventory.txt | disp_hud_sell
+echo "     └>┌───────────────────────────────────────────────────┐"
+echo -e "       |\e[4mWhat do you want to do : \e[24m                          |"
+echo "       │  X) Write number to sell                          │"
+echo "       │  q) or 'q' to Quit Shop                           │"
+echo "       └───────────────────────────────────────────────────┘"
+get_current_gold_player
+gold="$?"
+echo "       YOU HAVE $gold GOLD\$"
+
+while :
+	do
+	    read -r -p "Your choice : " context_choice
+
+	    case ${context_choice} in
+		[0-9]*)
+			sell_item ${context_choice}
+			break
+		    ;;
+		q)
+			break
+		    ;;
+		*)
+		    echo "Seriously could you just type a number between 1 & 2 ?"
+		    ;;
+	    esac
+	done
+}
+
+
 buy_item(){
 y=$1 #chiffre correspondant a une ligne dans l'inventaire
 itemX=$(sed -n ${y}p < shop.txt) #on récupere la string correspondant
@@ -409,6 +447,23 @@ echo ""
 clear
 test_hud
 }
+
+sell_item(){
+y=$1 #chiffre correspondant a une ligne dans l'inventaire
+itemX=$(sed -n ${y}p < inventory.txt) #on récupere la string correspondant
+
+echo $itemX
+get_current_gold_player
+sed -i -e "s/^gold:[0-9]*/gold:$((gold + 5))/g" ./stats.txt
+sed -i -e "/^${itemX}/d" inventory.txt
+tell_story1 "Ka-Ching !"
+echo ""
+
+test_hud
+
+}
+
+
 #*************************************************
 # MONSTER GENERATION
 #*************************************************
@@ -778,7 +833,7 @@ get_current_max_xp_player
 xp=$?
 get_current_level_player
 lvl=$?
-if [ $xp -gt 10 ]
+if [ $xp -gt 20 ]
 	then
 	sed -i -e "s/^xp:[0-9]*/xp:0/g" ./stats.txt
 	sed -i -e "s/^lvl:[0-9]*/lvl:$((lvl + 1))/g" ./stats.txt
@@ -796,7 +851,7 @@ sed -i -e "s/^hp:[0-9]*/hp:$((base_hp + 5))/g" ./stats.txt
 get_current_max_str_player
 str=$?
 cat victory.txt
-tell_story2 "Press a key to skip..."
+sleep 1
 sed -i -e "s/^str:[0-9]*/str:$(( str + 5 ))/g" ./stats.txt
 sed -i -e "s/^mana:[0-9]*/mana:$((10))/g" ./stats.txt
 
@@ -951,6 +1006,17 @@ x=1
   printf "└%*s┴%*s┴%*s┘\n" "40" "" "10" "" "10" "" | sed 's/ /─/g'
 }
 
+
+disp_hud_sell() {
+
+  local idx
+  printf "┌%*s┬%*s┐\n" "40" "-Status- " "10" "" | sed 's/ /─/g ; s/-/ /g'
+  while read l ; do
+    padding=$(( -40 - $(wc -c <<<$l) + ${#l} +1 ))
+    printf "│%*s│%*s│\n" "$padding" "$l" "10" ""
+  done
+  printf "└%*s┴%*s┘\n" "40" "" "10" "" | sed 's/ /─/g'
+}
 
 
 equip(){
