@@ -15,4 +15,3 @@
     \  |  /
      : | :
      ; | ;
-"You have been healed Sir !"

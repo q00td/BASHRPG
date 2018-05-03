@@ -128,9 +128,11 @@ test_hud(){
 
 	printf "\e[$((0));$((0))H"
 
-	printf "\e[$((y));$((0))H"
-	bar HP 10 30	
-	printf "\e[$((y-1));$((0))H"
+	printf "\e[$((y));$((x-80))H"
+	mhp=$(get_current_max_base_hp_player)
+
+	bar HP 1 4
+	printf "\e[$((y-1));$((x-80))H"
 	bar MANA 1 50
 	
 	
@@ -211,19 +213,12 @@ play_map(){
 				for ((i=0; i<=nb_monster; i++)); do
 				   clear
 				   test_hud
-				   line_separator_ingame
-				   echo ""
 				   color=("32" "31" "33" "94" "36" "96") ; color_size=${#color[@]} ; y=${color[$(( $RANDOM % color_size ))]}
 				   echo -en "\e[${y}m"
 				   tableau=("monster1.txt" "monster2.txt" "monster3.txt" "monster4.txt") ; tab_size=${#tableau[@]} ; monster=${tableau[$(( $RANDOM % tab_size ))]}
 				   echo -en "\e[39m" 
-				   echo ""
-				   echo ""
-				   tell_story1 "You don't how his strength yet, you might have to try it"
-				   echo ""
 				   x=$(generate_monsters)
 				   stats_p=$(get_player_stats)
-				   line_separator_ingame
 				   fight_PvM $x $stats_p $monster
 				   
 				   
@@ -334,10 +329,10 @@ do
 					hp=$?
 					sed -i -e "s/^hp:[0-9]*/hp:$((hp))/g" ./stats.txt
 					sed -i -e "s/^mana:[0-9]*/mana:5/g" ./stats.txt
+					clear
+					test_hud
 					cat nurse.txt
-					echo ""
-					cat stats.txt
-					sleep 1
+					tell_story2 " You have been healed .. "
 					clear
 					test_hud
 					;;
@@ -1085,13 +1080,13 @@ bar(){
         (( BAR_PROGRESS-- ))
     fi
     [[ ${PERCENTAGE} -gt 25 ]] && printf "${text} [" || printf "${colorYellow}${text}${colorReset} ["
-    if [[ "${text}" == "MP" ]]; then
+    if [[ "${text}" == "MANA" ]]; then
         printf "${colorBlue}%-*s${colorReset}" $((BAR_PROGRESS+1)) | tr ' ' '#'
     else
         printf "${colorRed}%-*s${colorReset}" $((BAR_PROGRESS+1)) | tr ' ' '#'
     fi
-    printf "%*s" $((50-BAR_PROGRESS)) '] '
+    printf "%*s" $((50-BAR_PROGRESS)) | tr ' ' '-'
+    printf '] '
     [[ ${PERCENTAGE} -gt 25 ]] && printf "${current} / ${total}" || printf "${colorYellow}${current}${colorReset} / ${total}"
 }
-
 
