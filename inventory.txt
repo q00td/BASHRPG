@@ -1,2 +1,1 @@
-katana:2:p
-helmet:1:hl
+heal:15:h

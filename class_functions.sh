@@ -129,11 +129,13 @@ test_hud(){
 	printf "\e[$((0));$((0))H"
 
 	printf "\e[$((y));$((x-80))H"
-	mhp=$(get_current_max_base_hp_player)
 
-	bar HP 1 4
+	mhp=$(printf "%s" "$z" | sed -n '5p' | cut -d ":" -f 2)
+	hp=$(printf "%s" "$z" | sed -n '3p'| cut -d ":" -f 2)
+	mana=$(printf "%s" "$z" | sed -n '2p'| cut -d ":" -f 2)
+	bar HP $hp $mhp
 	printf "\e[$((y-1));$((x-80))H"
-	bar MANA 1 50
+	bar MANA $mana 10
 	
 	
 	printf "\e[$((0));$((0))H"
@@ -311,14 +313,14 @@ get_attack(){
 play_town(){
 while :
 do
-	echo "-----------------------------------------------------"
+	echo "┌────────────────────────────────────────────────────┐"
 			echo -e "| \e[4mChoose an action : \e[24m                                | "							
-			echo "|      1) Shop.                                      |"     
-			echo "|      2) Rest.                                      |" 
-			echo "|      3) Leave.                                     | "
+			echo "│      1) Shop.                                      │"     
+			echo "│      2) Rest.                                      │" 
+			echo "│      3) Leave.                                     │ "
 
 			read -r -p "| Your choice [1..3] : " choice
-			echo "-----------------------------------------------------"
+			echo "└───────────────────────────────────────────────────┘"
 
 			case ${choice} in
 				1)
@@ -359,11 +361,11 @@ shop(){
 clear
 test_hud
 cat shop.txt | disp_hud_shop
-echo "     └> _____________________________________________________"
+echo "     └>┌───────────────────────────────────────────────────┐"
 echo -e "       |\e[4mWhat do you want to do : \e[24m                          |"
-echo "       |  X) Write number to equip/use                     |"
-echo "       |  q) or 'q' to Quit Shop                           |"
-echo "       ------------------------------------------------------"
+echo "       │  X) Write number to equip/use                     │"
+echo "       │  q) or 'q' to Quit Shop                           │"
+echo "       └───────────────────────────────────────────────────┘"
 get_current_gold_player
 gold="$?"
 echo "       YOU HAVE $gold GOLD\$"
@@ -498,7 +500,7 @@ return $xp
 # GET LEVEL OF PLAYER
 #*************************************************
 get_current_level_player(){
-	x=$(sed -n '7p' < stats.txt)
+	x=$(sed -n '8p' < stats.txt)
 	lvl=$(cut -d ":" -f 2 <<< "$x")
 return $lvl
 }
@@ -526,6 +528,12 @@ return $str
 #*************************************************
 get_current_max_mana_player(){
 	x=$(sed -n '2p' < stats.txt)
+	mana=$(cut -d ":" -f 2 <<< "$x")
+return $mana
+}
+
+get_current_gold_player(){
+	x=$(sed -n '6p' < stats.txt)
 	mana=$(cut -d ":" -f 2 <<< "$x")
 return $mana
 }
@@ -558,15 +566,15 @@ fight_PvM(){
 	    echo -en "\e[39m" 
 		echo ""
 		echo ""
-		echo "-----------------------------------------------------"
+		echo "┌────────────────────────────────────────────────────┐"
 		echo -e "| \e[4mChoose an action : \e[24m                                | "							
-		echo "|      1) Attack (Melee)                             |"     
-		echo "|      2) Block(Slight chance to counter attack)     |" 
-		echo "|      3) Special attack (MP)                        |"
-		echo "|      4) Run away like a Coward !                   | "
+		echo "│      1) Attack (Melee)                             │"     
+		echo "│      2) Block(Slight chance to counter attack)     │" 
+		echo "│      3) Special attack (MP)                        │"
+		echo "│      4) Run away like a Coward !                   │ "
 
 		read -r -p "| Your choice [1..3] : " choice
-		echo "-----------------------------------------------------"
+		echo "└────────────────────────────────────────────────────┘"
 
 		case ${choice} in
 			1)
@@ -705,13 +713,17 @@ fight_PvM(){
 	get_current_max_xp_player
 	xp=$?
 	sed -i -e "s/^hp:[0-9]*/hp:$player_hp/g" ./stats.txt
-	if [ "$monster_hp" -lt "0" ] | [ "$monster_hp" -eq "0" ] ;
+	if [ ! "$monster_hp" -gt "0" ] ;
 	then
 		
-		exit
+		
 		sed -i -e "s/^xp:[0-9]*/xp:$((xp + monster_xp))/g" ./stats.txt
+		get_current_gold_player
+		gold=$?
+		sed -i -e "s/^gold:[0-9]*/gold:$((RANDOM%10 + gold))/g" ./stats.txt
+		check_xp
 	fi
-	check_xp
+	
 
 }
 get_class(){
@@ -763,18 +775,14 @@ generate_dmg_monster(){
 
 check_xp(){
 get_current_max_xp_player
-
-
 xp=$?
 get_current_level_player
 lvl=$?
 if [ $xp -gt 10 ]
 	then
-	sleep 1
-	echo "LEVEL UPPPP"
 	sed -i -e "s/^xp:[0-9]*/xp:0/g" ./stats.txt
 	sed -i -e "s/^lvl:[0-9]*/lvl:$((lvl + 1))/g" ./stats.txt
-	sleep 2
+
 	upstat
 fi
 }
@@ -782,25 +790,28 @@ fi
 upstat(){
 get_current_max_base_hp_player
 base_hp=$?
-sed -i -e "s/^hp:[0-9]*/hp:$(( base_hp + 10 ))/g" ./stats.txt
+sed -i -e "s/^base_hp:[0-9]*/base_hp:$((base_hp+5))/g" ./stats.txt
+sed -i -e "s/^hp:[0-9]*/hp:$((base_hp + 5))/g" ./stats.txt
+
 get_current_max_str_player
 str=$?
-sed -i -e "s/^str:[0-9]*/str:$(( str + 10 ))/g" ./stats.txt
-get_current_max_mana_player
-mana=$?
-sed -i -e "s/^mana:[0-9]*/mana:$(( mana + 10 ))/g" ./stats.txt
+cat victory.txt
+tell_story2 "Press a key to skip..."
+sed -i -e "s/^str:[0-9]*/str:$(( str + 5 ))/g" ./stats.txt
+sed -i -e "s/^mana:[0-9]*/mana:$((10))/g" ./stats.txt
+
 }
 open_inventory(){
 
 
 while :
 	do
-	echo "     └> _____________________________________________________"
-	echo -e "       |\e[4mWhat do you want to do : \e[24m                              |"
-	echo "       |  1) Check your items                                |"
-	echo "       |  2) Check your bag to use/drop/(Des)equip items     |"
-	echo "       |  3) Quit inventory                                  |"
-	echo "       ------------------------------------------------------"
+	echo "     └>┌─────────────────────────────────────────────────────┐"
+	echo -e "       |\e[4mWhat do you want to do : \e[24m                            │"
+	echo "       │  1) Check your items                                │"
+	echo "       │  2) Check your bag to use/drop/(Des)equip items     │"
+	echo "       │  3) Quit inventory                                  │"
+	echo "       └─────────────────────────────────────────────────────┘"
 	    read -r -p "Your choice [1..3]" context_choice
 
 	    case ${context_choice} in
@@ -943,11 +954,11 @@ x=1
 
 
 equip(){
-echo "     └> _____________________________________________________"
-echo -e "       |\e[4mWhat do you want to do : \e[24m                        |"
-echo "       |  X) Write number to equip/use                     |"
-echo "       |  q) or 'q' to Quit inventory                      |"
-echo "       ------------------------------------------------------"
+echo "     └>┌───────────────────────────────────────────────────┐"
+echo -e "       │\e[4mWhat do you want to do : \e[24m                          │"
+echo "       │  X) Write number to equip/use                     │"
+echo "       │  q) or 'q' to Quit inventory                      │"
+echo "       └───────────────────────────────────────────────────┘"
 
 while :
 	do

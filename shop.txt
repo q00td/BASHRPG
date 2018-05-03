@@ -1,4 +1,4 @@
-legs:2:l:26
-helmet:1:hl:21
-longsword:3:p:35
-chest:3:c:24
+sword:1:p:23
+chest:3:c:21
+legs:2:l:24
+shield:2:d:39
