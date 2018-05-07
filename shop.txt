@@ -1,4 +1,0 @@
-longsword:3:p:26
-bow:3:p:36
-sword:1:p:38
-chest:3:c:23
