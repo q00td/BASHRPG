@@ -1,6 +1,6 @@
-head=
-hand=
-offhand=
+head=helmet:1:hl
+hand=bow:3:p
+offhand=shield:2:d
 chest=
 arm=
-legs=
+legs=legs:2:l

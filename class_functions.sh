@@ -151,20 +151,20 @@ choose_map(){
 	test_hud
 	rnd=$((RANDOM%10))
 	case ${rnd} in
-			[0-5])
+			[0-6])
 				#MONSTER-----------------
 				echo "Oh crap, you encounter some monsters"
 				result=1
 				return "$result"
 				;;
-			6)
+			7)
 				#CHEST-------------------
 				echo "Look a chest !"
 				
 				result=2
 				return "$result"
 				;;
-			[7-9])
+			[8-9])
 				clear
 				test_hud
 				#TOWN--------------------
@@ -211,7 +211,7 @@ play_map(){
 				sleep 1
 				nb=$1
 				#MONSTER-----------------
-				nb_monster=$((RANDOM%3))
+				nb_monster=$((RANDOM%3+1))
 				for ((i=0; i<=nb_monster; i++)); do
 				   clear
 				   test_hud
@@ -624,9 +624,8 @@ fight_PvM(){
 		echo "┌────────────────────────────────────────────────────┐"
 		echo -e "| \e[4mChoose an action : \e[24m                                | "							
 		echo "│      1) Attack (Melee)                             │"     
-		echo "│      2) Block(Slight chance to counter attack)     │" 
-		echo "│      3) Special attack (MP)                        │"
-		echo "│      4) Run away like a Coward !                   │ "
+		echo "│      2) Special attack (MP)                        │"
+		echo "│      3) Run away like a Coward !                   │ "
 
 		read -r -p "| Your choice [1..3] : " choice
 		echo "└────────────────────────────────────────────────────┘"
@@ -665,13 +664,8 @@ fight_PvM(){
 				
 
 				;;
+		
 			2)
-				echo "you blocked"
-				sleep 2
-				clear
-				test_hud
-				;;
-			3)
 			clear
 			test_hud
 			line_separator_ingame_fight
@@ -728,7 +722,7 @@ fight_PvM(){
 			
 			check_hp $player_hp
 			;;
-			4)
+			3)
 				if [ $((RANDOM%2)) -eq "0" ]
 				then
 					echo "You ran away from this fight (No XP,No L00T)"
