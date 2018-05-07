@@ -1,8 +1,8 @@
 str:12
-mana:6
-hp:21
-xp:11
+mana:4
+hp:32
+xp:9
 base_hp:35
-gold:47
+gold:34
 mage
 lvl:1
