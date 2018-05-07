@@ -660,6 +660,7 @@ fight_PvM(){
 
 				line_separator_ingame_outfight
 				check_hp $player_hp
+				sed -i -e "s/^hp:[0-9]*/hp:$player_hp/g" ./stats.txt
 				
 				
 
@@ -667,6 +668,7 @@ fight_PvM(){
 		
 			2)
 			clear
+			sed -i -e "s/^hp:[0-9]*/hp:$player_hp/g" ./stats.txt
 			test_hud
 			line_separator_ingame_fight
 			class=$(get_class)
@@ -746,10 +748,12 @@ fight_PvM(){
 				check_hp $player_hp
 				sleep 1
 				clear
+				sed -i -e "s/^hp:[0-9]*/hp:$player_hp/g" ./stats.txt
 				test_hud
 				;;
 			*)
 				clear
+				sed -i -e "s/^hp:[0-9]*/hp:$player_hp/g" ./stats.txt
 				test_hud
 				echo "Is it that hard to type a number between 1 and 3 ?"
 				;;
