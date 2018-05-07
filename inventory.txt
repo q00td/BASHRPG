@@ -1,1 +1,1 @@
-katana:2:p
+legs:2:l

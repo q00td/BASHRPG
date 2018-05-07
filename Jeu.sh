@@ -12,7 +12,16 @@
 # Previous versions : 0.3-0.5-0.7-1.0-2.0
 # Version : 3.00 Closed Beta
 
-# This is a one path Rogue like RPG based on the RPG you can play in real life 
+# This is a one path Rogue like RPG based on the RPG you can play in real life
+_TrappedExit(){
+	clear
+	echo ""
+	echo "╔═╗╔═╗╔═╗╔╦╗  ╔╗ ╦ ╦╔═╗  ┬  
+║ ╦║ ║║ ║ ║║  ╠╩╗╚╦╝║╣   │  
+╚═╝╚═╝╚═╝═╩╝  ╚═╝ ╩ ╚═╝  o "
+	exit 0
+}
+trap '_TrappedExit' SIGTERM SIGINT
 clear
 my_dir="$(dirname $0)"
 source "${my_dir}/class_functions.sh"
