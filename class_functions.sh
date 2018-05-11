@@ -785,6 +785,17 @@ get_class(){
 
 }
 generate_magic_dmg_warrior(){
+
+	get_current_max_hp_player
+	hp=$?
+	get_current_max_base_hp_player
+	mhp=$?
+	if [ "$((hp+5))" -gt "$mhp" ];
+		then
+		sed -i -e "s/^hp:[0-9]*/hp:$mhp/g" ./stats.txt
+	else
+		sed -i -e "s/^hp:[0-9]*/hp:$(( hp + 5 ))/g" ./stats.txt
+	fi
 	return $((RANDOM%10 + 10))
 }
 generate_magic_dmg_mage(){
