@@ -609,6 +609,7 @@ fight_PvM(){
 	#------Monster---
 	monster_str=$(cut -d ":" -f 2 <<< "$monster")
 	monster_hp=$(cut -d ":" -f 1 <<< "$monster")
+	monster_mhp=$monster_hp
 	monster_xp=$(cut -d ":" -f 3 <<< "$monster")
 	#------Player----
 	player_str=$(cut -d ":" -f 2 <<< "$player")
@@ -636,6 +637,7 @@ fight_PvM(){
 				generate_dmg
 				dmg=$?
 				clear
+				echo ""
 				test_hud
 				line_separator_ingame_fight
 				echo "You did : $dmg DMG -> MONSTER"
@@ -655,12 +657,13 @@ fight_PvM(){
 				player_hp=$((player_hp - dmg_final))
 				echo "                             -INFO-"
 				echo "[MONSTER HP | $(low_hp $monster_hp) HP]                                       "
-				echo "[YOUR HP | $(low_hp $player_hp) HP]"
-				echo "[YOUR MP | $player_mana MP]"
-
 				line_separator_ingame_outfight
 				check_hp $player_hp
 				sed -i -e "s/^hp:[0-9]*/hp:$player_hp/g" ./stats.txt
+				printf "\e[$((0));$((0))H"
+				bar MONSTER_HP $monster_hp $monster_mhp
+				printf "\e[$((0));$((0))H"
+				echo ""
 				
 				
 
@@ -668,6 +671,7 @@ fight_PvM(){
 		
 			2)
 			clear
+			echo ""
 			sed -i -e "s/^hp:[0-9]*/hp:$player_hp/g" ./stats.txt
 			test_hud
 			line_separator_ingame_fight
@@ -714,9 +718,12 @@ fight_PvM(){
 			player_hp=$((player_hp - dmg_final))
 			echo "                             -INFO-"
 			echo "[MONSTER HP | $(low_hp $monster_hp) HP]                                       "
-			echo "[YOUR HP | $(low_hp $player_hp) HP]"
-			echo "[YOUR MP | $player_mana MP]"
 			echo "                             ------"
+			printf "\e[$((0));$((0))H"
+			bar MONSTER_HP $monster_hp $monster_mhp
+			printf "\e[$((0));$((0))H"
+
+			echo ""
 
 			else
 				echo "You dont have any MP"
@@ -730,6 +737,7 @@ fight_PvM(){
 					echo "You ran away from this fight (No XP,No L00T)"
 					break
 				else
+					echo ""
 					line_separator_ingame_fight
 					echo "you failed to run away"
 					clear
@@ -740,10 +748,14 @@ fight_PvM(){
 					player_hp=$((player_hp - dmg_monster))
 					echo "                             -INFO-"
 					echo "[MONSTER HP | $(low_hp $monster_hp) HP]                                       "
-					echo "[YOUR HP | $(low_hp $player_hp) HP]"
-					echo "[YOUR MP | $player_mana MP]"
 					echo "                             ------"
 					line_separator_ingame_outfight
+					printf "\e[$((0));$((0))H"
+					bar MONSTER_HP $monster_hp $monster_mhp
+					printf "\e[$((0));$((0))H"
+
+
+					echo ""
 				fi
 				check_hp $player_hp
 				sleep 1
@@ -1159,8 +1171,15 @@ bar(){
     text=$1
     current=$2
     total=$3
+
+	if [ "$current" -lt "0" ]; then
+        current="0"
+    fi
+
     PERCENTAGE=$(( 100*(current)/total ))
     BAR_PROGRESS=$(( PERCENTAGE/2  ))
+
+
 
     if [ $PERCENTAGE -eq 100 ]; then
         (( BAR_PROGRESS-- ))

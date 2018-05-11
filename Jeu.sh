@@ -25,7 +25,7 @@ trap '_TrappedExit' SIGTERM SIGINT
 clear
 my_dir="$(dirname $0)"
 source "${my_dir}/class_functions.sh"
-
+aplay -q music.wav &
 echo -e "\e[5m Press a key to skip... \e[25m "
 tell_story2 "Once upon a time, a Young adventurer called Elyos who only activity was to hunt deers to feed his sister, found the entrance to a another world, so dark and so deep into the earth that no one would even want to go through that gate. But one day his last member of his family, her sister, suddenly dissapeared. The only trail he had was some blood following a path, leading to the gate he found before. This the Quest about finding the last thing you treasure the most. This is your Quest.."
 
