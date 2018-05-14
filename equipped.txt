@@ -1,5 +1,5 @@
 head=
-hand=
+hand=longsword:3:p
 offhand=
 chest=
 arm=

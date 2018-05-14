@@ -1,0 +1,4 @@
+shield:2:d:37
+helmet:1:hl:22
+legs:2:l:21
+katana:2:p:39
