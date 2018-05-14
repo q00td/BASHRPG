@@ -6,6 +6,6 @@ spear:2:p
 shield:2:d
 heal:15:h
 mana:15:m
-chest:3:c
+armor:3:c
 helmet:1:hl
 legs:2:l
