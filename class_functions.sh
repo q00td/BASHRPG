@@ -320,7 +320,7 @@ do
 			echo "│      3) Rest.                                      │" 
 			echo "│      4) Leave.                                     │ "
 
-			read -r -p "| Your choice [1..3] : " choice
+			read -r -p "| Your choice [1..4] : " choice
 			echo "└───────────────────────────────────────────────────┘"
 
 			case ${choice} in
@@ -343,6 +343,7 @@ do
 					test_hud
 					;;
 				4)
+					clear
 					break
 					;;
 				*)
@@ -432,7 +433,7 @@ itemX=$(sed -n ${y}p < shop.txt) #on récupere la string correspondant
 pos=$(cut -d ":" -f 4 <<< "$itemX") # on extrait les golds pour le Case
 get_current_gold_player
 gold="$?"
-if [ "$gold" -gt "$pos" ]
+if [ "$gold" -ge "$pos" ]
 then
 	sed -i -e "s/^gold:[0-9]*/gold:$(( gold - pos ))/g" ./stats.txt
 	echo $itemX | cut -d":" -f1,2,3 >> inventory.txt
@@ -599,6 +600,8 @@ return $mana
 #*************************************************
 fight_PvM(){	
 
+	dmg_player="x"
+	dmg_final=0
 	get_attack
 	attack="$?"
 	get_defense
@@ -622,6 +625,11 @@ fight_PvM(){
 	    echo -en "\e[39m" 
 		echo ""
 		echo ""
+		if [[ "$dmg_player" != "x" ]];
+			then
+		echo "You did : $dmg_player DMG -> MONSTER"
+		echo "Monster : $dmg_final DMG -> YOU"
+		fi
 		echo "┌────────────────────────────────────────────────────┐"
 		echo -e "| \e[4mChoose an action : \e[24m                                | "							
 		echo "│      1) Attack (Melee)                             │"     
@@ -639,8 +647,8 @@ fight_PvM(){
 				clear
 				echo ""
 				test_hud
-				echo "You did : $dmg DMG -> MONSTER"
 				monster_hp_tmp=$monster_hp
+				dmg_player=$((dmg + attack))
 				monster_hp=$((monster_hp_tmp - dmg - attack))
 				generate_dmg_monster monster_str
 				dmg_monster=$?
@@ -649,14 +657,9 @@ fight_PvM(){
 				then
 					dmg_final=0
 				else
-					dmg_final="(( dmg_monster - def ))"
+					dmg_final="$(( dmg_monster - def ))"
 				fi
-				
-				echo "Monster : $dmg DMG -> YOU"
 				player_hp=$((player_hp - dmg_final))
-				echo "                             -INFO-"
-				echo "[MONSTER HP | $(low_hp $monster_hp) HP]                                       "
-				line_separator_ingame_outfight
 				check_hp $player_hp
 				sed -i -e "s/^hp:[0-9]*/hp:$player_hp/g" ./stats.txt
 				printf "\e[$((0));$((0))H"
@@ -709,14 +712,12 @@ fight_PvM(){
 				then
 					dmg_final=0
 				else
-					dmg_final="(( dmg_monster - def ))"
+					dmg_final="$(( dmg_monster - def ))"
 				fi
 				
 			echo "Monster : $dmg DMG -> YOU"
 			player_hp=$((player_hp - dmg_final))
-			echo "                             -INFO-"
-			echo "[MONSTER HP | $(low_hp $monster_hp) HP]                                       "
-			echo "                             ------"
+
 			printf "\e[$((0));$((0))H"
 			bar MONSTER_HP $monster_hp $monster_mhp
 			printf "\e[$((0));$((0))H"
@@ -744,10 +745,7 @@ fight_PvM(){
 					dmg_monster=$?
 					echo "Monster : $dmg DMG -> YOU"
 					player_hp=$((player_hp - dmg_monster))
-					echo "                             -INFO-"
-					echo "[MONSTER HP | $(low_hp $monster_hp) HP]                                       "
-					echo "                             ------"
-					line_separator_ingame_outfight
+
 					printf "\e[$((0));$((0))H"
 					bar MONSTER_HP $monster_hp $monster_mhp
 					printf "\e[$((0));$((0))H"
@@ -1147,7 +1145,10 @@ case ${pos} in
 			break
 		    ;;
 		m)
-			#SOCCUPER DE LA POTION DE HEAL
+			#SOCCUPER DE LA POTION DE Mana
+			sed -i -e "s/^hp:[0-9]*/hp:5/g" ./stats.txt
+			sed -i '/^mana/d' ./inventory.txt
+			break
 			break
 		    ;;
 		*)

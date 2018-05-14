@@ -160,8 +160,8 @@ echo "---------------------------------------NEW_ROOM---------------------------
 
 		echo "1) Inventory"
 		echo "2) Go to the next room"
-		echo "3) Quit"
-	    read -r -p "Your choice [1..3]" context_choice
+		echo "q) Quit"
+	    read -r -p "Your choice [1..q]" context_choice
 
 	    case ${context_choice} in
 		1)
@@ -173,7 +173,7 @@ echo "---------------------------------------NEW_ROOM---------------------------
 		    echo "Going to the next room..."
 		    break
 		    ;;
-		3)
+		"q")
 		    #TODO Méthode pour break tout le prgrm
 			echo ""
 			echo "╔═╗╔═╗╔═╗╔╦╗  ╔╗ ╦ ╦╔═╗  ┬  
