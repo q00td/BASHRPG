@@ -639,7 +639,6 @@ fight_PvM(){
 				clear
 				echo ""
 				test_hud
-				line_separator_ingame_fight
 				echo "You did : $dmg DMG -> MONSTER"
 				monster_hp_tmp=$monster_hp
 				monster_hp=$((monster_hp_tmp - dmg - attack))
@@ -674,7 +673,6 @@ fight_PvM(){
 			echo ""
 			sed -i -e "s/^hp:[0-9]*/hp:$player_hp/g" ./stats.txt
 			test_hud
-			line_separator_ingame_fight
 			class=$(get_class)
 
 			if [ $player_mana -gt "0" ]
@@ -738,7 +736,7 @@ fight_PvM(){
 					break
 				else
 					echo ""
-					line_separator_ingame_fight
+					
 					echo "you failed to run away"
 					clear
 					test_hud
