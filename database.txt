@@ -9,4 +9,3 @@ mana:15:m
 chest:3:c
 helmet:1:hl
 legs:2:l
-
