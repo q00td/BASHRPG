@@ -1,5 +1,0 @@
-bow:3:p:21
-spear:2:p:29
-longsword:3:p:25
-sword:1:p:27
-katana:2:p:22

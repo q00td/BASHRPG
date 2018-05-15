@@ -314,11 +314,12 @@ play_town(){
 while :
 do
 	echo "┌────────────────────────────────────────────────────┐"
-			echo -e "| \e[4mChoose an action : \e[24m                                | "							
+			echo -e "| \e[4mChoose an action : \e[24m                                │ "							
 			echo "│      1) Shop.                                      │"     
 			echo "│      2) Sell.                                      │"     
 			echo "│      3) Rest.                                      │" 
-			echo "│      4) Leave.                                     │ "
+			echo "│      4) Show Inventory.                            │" 
+			echo "│      q) Leave.                                     │ "
 
 			read -r -p "| Your choice [1..4] : " choice
 			echo "└───────────────────────────────────────────────────┘"
@@ -334,7 +335,7 @@ do
 					get_current_max_base_hp_player
 					hp=$?
 					sed -i -e "s/^hp:[0-9]*/hp:$((hp))/g" ./stats.txt
-					sed -i -e "s/^mana:[0-9]*/mana:5/g" ./stats.txt
+					sed -i -e "s/^mana:[0-9]*/mana:10/g" ./stats.txt
 					clear
 					test_hud
 					cat nurse.txt
@@ -342,9 +343,14 @@ do
 					clear
 					test_hud
 					;;
-				4)
+				q)
 					clear
 					break
+					;;
+				4)
+					clear
+					test_hud
+					liste | disp_hud
 					;;
 				*)
 					clear
@@ -634,22 +640,28 @@ fight_PvM(){
 		echo -e "| \e[4mChoose an action : \e[24m                                | "							
 		echo "│      1) Attack (Melee)                             │"     
 		echo "│      2) Special attack (MP)                        │"
-		echo "│      3) Run away like a Coward !                   │ "
+		echo "│      q) Run away like a Coward !                   │ "
 
 		read -r -p "| Your choice [1..3] : " choice
 		echo "└────────────────────────────────────────────────────┘"
 
 		case ${choice} in
 			1)
-
+				#Generer dommage joueur
 				generate_dmg
 				dmg=$?
+
+				#affichage de l'interface
 				clear
 				echo ""
 				test_hud
+
+				#Calculer les HP du monster
 				monster_hp_tmp=$monster_hp
 				dmg_player=$((dmg + attack))
 				monster_hp=$((monster_hp_tmp - dmg - attack))
+
+				#Calculer l'attaque du monstre
 				generate_dmg_monster monster_str
 				dmg_monster=$?
 				
@@ -659,9 +671,12 @@ fight_PvM(){
 				else
 					dmg_final="$(( dmg_monster - def ))"
 				fi
+
+
 				player_hp=$((player_hp - dmg_final))
 				check_hp $player_hp
 				sed -i -e "s/^hp:[0-9]*/hp:$player_hp/g" ./stats.txt
+				test_hud
 				printf "\e[$((0));$((0))H"
 				bar MONSTER_HP $monster_hp $monster_mhp
 				printf "\e[$((0));$((0))H"
@@ -674,7 +689,6 @@ fight_PvM(){
 			2)
 			clear
 			echo ""
-			sed -i -e "s/^hp:[0-9]*/hp:$player_hp/g" ./stats.txt
 			test_hud
 			class=$(get_class)
 
@@ -683,23 +697,23 @@ fight_PvM(){
 				case ${class} in
 				"warrior")
 					generate_magic_dmg_warrior
-					dmg=$?
-					monster_hp=$((monster_hp - dmg))
+					dmg_player=$?
+					monster_hp=$((monster_hp - dmg_player))
 				    ;;
 				"thief")
 					generate_magic_dmg_thief
-					dmg=$?
-					monster_hp=$((monster_hp - dmg))
+					dmg_player=$?
+					monster_hp=$((monster_hp - dmg_player))
 				    ;;
 				"mage")
 					generate_magic_dmg_mage
-					dmg=$?
-					monster_hp=$((monster_hp - dmg))
+					dmg_player=$?
+					monster_hp=$((monster_hp - dmg_player))
 				    ;;
 				"ranger")
 					generate_magic_dmg_ranger
-					dmg=$?
-					monster_hp=$((monster_hp - dmg))
+					dmg_player=$?
+					monster_hp=$((monster_hp - dmg_player))
 				    ;;
 	   		esac
 	   		player_mana=$((player_mana - 1 ))
@@ -717,7 +731,9 @@ fight_PvM(){
 				
 			echo "Monster : $dmg DMG -> YOU"
 			player_hp=$((player_hp - dmg_final))
+			sed -i -e "s/^hp:[0-9]*/hp:$player_hp/g" ./stats.txt
 
+			test_hud
 			printf "\e[$((0));$((0))H"
 			bar MONSTER_HP $monster_hp $monster_mhp
 			printf "\e[$((0));$((0))H"
@@ -730,7 +746,7 @@ fight_PvM(){
 			
 			check_hp $player_hp
 			;;
-			3)
+			q)
 				if [ $((RANDOM%2)) -eq "0" ]
 				then
 					echo "You ran away from this fight (No XP,No L00T)"
@@ -745,7 +761,7 @@ fight_PvM(){
 					dmg_monster=$?
 					echo "Monster : $dmg DMG -> YOU"
 					player_hp=$((player_hp - dmg_monster))
-
+					test_hud
 					printf "\e[$((0));$((0))H"
 					bar MONSTER_HP $monster_hp $monster_mhp
 					printf "\e[$((0));$((0))H"
@@ -881,8 +897,8 @@ while :
 	echo "     └>┌─────────────────────────────────────────────────────┐"
 	echo -e "       |\e[4mWhat do you want to do : \e[24m                            │"
 	echo "       │  1) Check your items                                │"
-	echo "       │  2) Check your bag to use/drop/(Des)equip items     │"
-	echo "       │  3) Quit inventory                                  │"
+	echo "       │  2) Check your bag to use/ Equip Items              │"
+	echo "       │  q) Quit inventory                                  │"
 	echo "       └─────────────────────────────────────────────────────┘"
 	    read -r -p "Your choice [1..3]" context_choice
 
@@ -901,7 +917,7 @@ while :
 			test_hud
 			
 		    ;;
-		3)
+		q)
 			clear
 			test_hud
 			break
@@ -920,6 +936,13 @@ init(){ #CREATE ALL THE FILES TO SAVE DATA ( WEAPONS , INVENTORY ETC .. )
 : > stats.txt
 : > equipped.txt
 shuf -n1 database.txt > inventory.txt
+
+echo "spear:2:p" >> inventory.txt
+echo "spear:2:p" >> inventory.txt
+echo "bow:2:p" >> inventory.txt
+echo "bow:2:p" >> inventory.txt
+
+
 : > shop.txt
 {
 echo "head="
@@ -963,7 +986,7 @@ liste() {
   arm=$(sed -n '4p' < equipped.txt)
   arm2=$(cut -d "=" -f 2 <<< "$arm")
 
-  echo "$hand $offhand $chest $arm2"
+  echo "$hand $offhand $arm2"
   beta=$(sed -n '6p' < equipped.txt)
   leg=$(cut -d "=" -f 2 <<< "$beta")
   echo "$leg"
@@ -1083,12 +1106,14 @@ pos=$(cut -d ":" -f 3 <<< "$itemX") # on extrait la catégorie pour le Case
 
 case ${pos} in
 		p)
+
 			tmp=$(sed -n 2p equipped.txt) #ON RECUPERE CURRENT WEAPON
 			tmp_x=$(cut -d "=" -f 2 <<< "$tmp")
 			echo $tmp_x >> inventory.txt # ON L'ENVOIE DANS L'INVENTAIRE
+
 			sed -i -e "s/^hand=.*$/hand=$itemX/" ./equipped.txt # ET ON REMPLACE
-			sed  -i -e "s/$itemX//" ./inventory.txt
-			sed -i '/^$/d' ./inventory.txt
+			sed -i "0,/$itemX/ s/^$itemX// ; /^$/d" ./inventory.txt
+
 			break
 		    ;;
 		d)
@@ -1096,7 +1121,7 @@ case ${pos} in
 			tmp_x=$(cut -d "=" -f 2 <<< "$tmp")
 			echo $tmp_x >> inventory.txt # ON L'ENVOIE DANS L'INVENTAIRE
 			sed -i -e "s/^offhand=.*$/offhand=$itemX/" ./equipped.txt # ET ON REMPLACE
-			sed  -i -e "s/$itemX//" ./inventory.txt
+			sed -i "0,/$itemX/ s/^$itemX// ; /^$/d" ./inventory.txt
 			sed -i '/^$/d' ./inventory.txt
 			break
 		    ;;
@@ -1105,7 +1130,7 @@ case ${pos} in
 			tmp_x=$(cut -d "=" -f 2 <<< "$tmp")
 			echo $tmp_x >> inventory.txt # ON L'ENVOIE DANS L'INVENTAIRE
 			sed -i -e "s/^chest=.*$/chest=$itemX/" ./equipped.txt # ET ON REMPLACE
-			sed  -i -e "s/$itemX//" ./inventory.txt
+			sed -i "0,/$itemX/ s/^$itemX// ; /^$/d" ./inventory.txt
 			sed -i '/^$/d' ./inventory.txt
 			break
 		    ;;
@@ -1114,7 +1139,7 @@ case ${pos} in
 			tmp_x=$(cut -d "=" -f 2 <<< "$tmp")
 			echo $tmp_x >> inventory.txt # ON L'ENVOIE DANS L'INVENTAIRE
 			sed -i -e "s/^head=.*$/head=$itemX/" ./equipped.txt # ET ON REMPLACE
-			sed  -i -e "s/$itemX//" ./inventory.txt
+			sed -i "0,/$itemX/ s/^$itemX// ; /^$/d" ./inventory.txt
 			sed -i '/^$/d' ./inventory.txt
 			break
 		    ;;
@@ -1123,7 +1148,7 @@ case ${pos} in
 			tmp_x=$(cut -d "=" -f 2 <<< "$tmp")
 			echo $tmp_x >> inventory.txt # ON L'ENVOIE DANS L'INVENTAIRE
 			sed -i -e "s/^legs=.*$/legs=$itemX/" ./equipped.txt # ET ON REMPLACE
-			sed  -i -e "s/$itemX//" ./inventory.txt
+			sed -i "0,/$itemX/ s/^$itemX// ; /^$/d" ./inventory.txt
 			sed -i '/^$/d' ./inventory.txt
 			break
 		    ;;
@@ -1133,7 +1158,7 @@ case ${pos} in
 			echo $tmp_x >> inventory.txt # ON L'ENVOIE DANS L'INVENTAIRE
 			sed -i -e "s/^arm=.*$/arm=$itemX/" ./equipped.txt # ET ON REMPLACE
 			sed  -i -e "s/$itemX//" ./inventory.txt
-			sed -i '/^$/d' ./inventory.txt
+			sed -i "0,/$itemX/ s/^$itemX// ; /^$/d" ./inventory.txt
 			break
 		    ;;
 		h)
@@ -1141,13 +1166,13 @@ case ${pos} in
 			get_current_max_hp_player
 			hp=$?
 			sed -i -e "s/^hp:[0-9]*/hp:$(( hp + 15 ))/g" ./stats.txt
-			sed -i '/^heal/d' ./inventory.txt
+			sed -i "0,/heal/ s/^heal:.*$// ; /^$/d" ./inventory.txt			
 			break
 		    ;;
 		m)
 			#SOCCUPER DE LA POTION DE Mana
-			sed -i -e "s/^hp:[0-9]*/hp:5/g" ./stats.txt
-			sed -i '/^mana/d' ./inventory.txt
+			sed -i -e "s/^hp:[0-9]*/hp:10/g" ./stats.txt
+			sed -i "0,/mana/ s/^mana:.*$// ; /^$/d" ./inventory.txt			
 			break
 			break
 		    ;;

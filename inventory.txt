@@ -1,1 +1,4 @@
-mana:15:m
+spear:2:p
+spear:2:p
+bow:2:p
+spear:2:p

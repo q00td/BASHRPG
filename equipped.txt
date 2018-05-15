@@ -1,5 +1,5 @@
 head=
-hand=
+hand=bow:2:p
 offhand=
 chest=
 arm=
