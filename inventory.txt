@@ -1,4 +1,5 @@
-spear:2:p
-spear:2:p
-bow:2:p
-spear:2:p
+heal:15:h
+legs:2:l
+mana:10:m
+katana:2:p
+longsword:3:p

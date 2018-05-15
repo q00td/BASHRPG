@@ -786,7 +786,8 @@ fight_PvM(){
 		
 	done
 	cat cup.txt
-		tell_story2 " You survived this fight !!!..."
+	echo " You survived this fight !!!..."
+	sleep 1.6
 	get_current_max_xp_player
 	xp=$?
 	sed -i -e "s/^hp:[0-9]*/hp:$player_hp/g" ./stats.txt
@@ -936,13 +937,6 @@ init(){ #CREATE ALL THE FILES TO SAVE DATA ( WEAPONS , INVENTORY ETC .. )
 : > stats.txt
 : > equipped.txt
 shuf -n1 database.txt > inventory.txt
-
-echo "spear:2:p" >> inventory.txt
-echo "spear:2:p" >> inventory.txt
-echo "bow:2:p" >> inventory.txt
-echo "bow:2:p" >> inventory.txt
-
-
 : > shop.txt
 {
 echo "head="

@@ -1,8 +1,8 @@
-str:9
-mana:0
-hp:35
+str:20
+mana:9
+hp:9
 xp:18
-base_hp:50
-gold:40
-warrior
-lvl:1
+base_hp:35
+gold:66
+thief
+lvl:2

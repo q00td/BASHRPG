@@ -1,0 +1,5 @@
+longsword:3:p:28
+katana:2:p:20
+bow:3:p:32
+helmet:1:hl:38
+legs:2:l:34

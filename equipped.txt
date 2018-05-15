@@ -1,6 +1,6 @@
 head=
-hand=bow:2:p
+hand=longsword:3:p
 offhand=
 chest=
 arm=
-legs=
+legs=legs:2:l
