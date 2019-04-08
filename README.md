@@ -4,7 +4,14 @@
 #                   2018
 # Author : Quentin OTERNAUD , Quentin GANDILLET         
 #----------------------------------------
-A propos du jeu : 
+About the game : 
+
+Basically it's a RPG turn per turn, where you'll fight monsters , find loots inside chests or go to the town to sell / buy items
+You'll be able to level up to increase your stats and maybe later be able to cast spells.
+Maybe i'll adjust the game a little bit , i don't know yet if it's too hard or too easy but it can be very repetitiv.
+All monster stats are generated randomly based on your stats.
+
+A propos du jeu (note for my teacher) : 
 
 /!\ IMPORTANT /!\ : Jouer avec la taille d'écran la plus grande possible ( ou suffisante ), et mettre les perfomances de la machine ( ou VM ) au max 
 
@@ -37,7 +44,3 @@ un check est present en début de programme pour voir si celle si est disponible
     
 								-----------------------------------
 
-Basically it's a RPG Game turn per turn, where you'll fight monsters , find loots inside chests or go to the town to sell / buy items
-You'll be able to level up to increase your stats and maybe later be able to cast spells , So far i still need to code the Town and the merchant and finally the spells.
-And maybe adjust the game a little bit , i don't know yet if it's too hard or too easy but it can be very repetitiv.
-All monster stats are generated randomly based on your stats.
