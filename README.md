@@ -1,19 +1,19 @@
- -- LAUNCH Jeu.sh
+ How to start the game : './Jeu.sh'
+ 
 # -----------------BASH_RPG--------------
 #                   2018
 # Author : Quentin OTERNAUD , Quentin GANDILLET         
 #----------------------------------------
-A propos du jeu ( Note au professeur ) : 
+A propos du jeu : 
 
 /!\ IMPORTANT /!\ : Jouer avec la taille d'écran la plus grande possible ( ou suffisante ), et mettre les perfomances de la machine ( ou VM ) au max 
 
-Pour lancer le Jeu il faut lancer "Jeu.sh"
 
 C'est un rpg ou l'on suit un chemin, on commence le jeu en choissisant une classe ou en continuant la dernière partie
 on va aller de salle en salle , il y a trois type de salle :
-	- Monstre , ou l'on va combatter un/plusieurs monstre(s)                -> très courant 60%
-	- Coffre , ou l'on va trouver un item au hasard                         -> Très peu courant 10 %
-	- et Ville ou l'on peut acheter/vendre/se reposer/voir son inventaire   -> assez courant 30 %
+	- Monstre , ou l'on va combatter un/plusieurs monstre(s) (très courant 60%)
+	- Coffre , ou l'on va trouver un item au hasard          (Très peu courant 10 %)
+	- et Ville ou l'on peut acheter/vendre/se reposer/voir son inventaire (assez courant 30 %)
 
 Entre deux salles , on peut quitter le jeu , ou réorganiser son inventaire, ou quitter le jeu
 si l'on quitte le jeu on pourra prendre sa partie plus tard
