@@ -45,9 +45,7 @@ Feel free to edit those to run some tests, don't forget to say 'No' when startin
 
 ## Acknowledgments
 
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
+* A Big thanks to all my sys admin colleagues who helped me when i was stuck.
  
  ## More about the game
  
