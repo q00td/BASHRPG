@@ -40,7 +40,7 @@ Feel free to edit those to run some tests, don't forget to say 'No' when startin
 
 ## Authors
 
-* **Quentin OTERNAUD** - (https://github.com/PurpleBooth)
+* **Quentin OTERNAUD**
 
 
 ## Acknowledgments
